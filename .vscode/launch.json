@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,  // Port par défaut de Xdebug 3
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"  // Assurez-vous que le chemin correspond à votre dossier local
+      }
+    },
+    {
+      "name": "Launch PHP Script",
+      "type": "php",
+      "request": "launch",
+      "program": "${workspaceFolder}/app/index.php",  // Spécifiez le script PHP à exécuter
+      "cwd": "${workspaceFolder}/app",  // Dossier de travail de l'application
+      "port": 9003,  // Port par défaut de Xdebug 3
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"  // Assurez-vous que le chemin correspond à votre dossier local
+      }
+    }
+  ]
+}
+
+  
