@@ -80,5 +80,14 @@ class UserModel extends SqlConnect {
       $req->execute($params);
       
       return $this->get($id);
+    }
+
+  public function saveDrawing($id, $draw_svg) {
+    $query = "UPDATE $this->table SET draw_svg = :draw_svg WHERE id = :id";
+    $stmt = $this->db->prepare($query);
+    $stmt->execute([
+        'draw_svg' => $draw_svg,
+        'id' => $id
+    ]);
   }
 }

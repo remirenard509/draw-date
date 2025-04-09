@@ -58,4 +58,19 @@ class User extends Controller {
       throw $e;
     }
   }
+
+  #[Route("POST", "/save-drawing")]
+  public function saveDrawing() {
+      try {
+          $data = $this->body;
+          if (empty($data['id']) || empty($data['draw_svg'])) {
+              throw new HttpException("Missing id or draw_svg", 400);
+          }
+          $this->user->saveDrawing($data['id'], $data['draw_svg']);
+          return ['message' => 'Drawing saved successfully'];
+      } catch (\Exception $e) {
+        error_log('Erreur : ' . $e->getMessage()); // Log de l'erreur
+          throw new HttpException($e->getMessage(), 400);
+      }
+  }
 }

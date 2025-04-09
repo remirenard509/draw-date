@@ -37,6 +37,8 @@ class DrawingApp {
             this.autoSmooth = !this.autoSmooth;
             this.smoothButtonStatus();
         });
+        document.getElementById('save').addEventListener('click', () => {this.saveDrawingToDatabase(this.generateSvgCentered(this.history))});
+
     }
 
     adjustCanvasResolution() {
@@ -133,7 +135,6 @@ class DrawingApp {
         if (this.autoSmooth) {
             this.smooth();
         }
-        this.printCenteredSvg(this.history);
     }
 
     smoothStroke(x, y) {
@@ -173,7 +174,6 @@ class DrawingApp {
             this.redoHistory.push(this.history.pop());
             this.redrawCanvas();
         }
-        this.printCenteredSvg(this.history);
     }
 
     redo() {
@@ -181,14 +181,12 @@ class DrawingApp {
             this.history.push(this.redoHistory.pop());
             this.redrawCanvas();
         }
-        this.printCenteredSvg(this.history);
     }
 
     clear() {
         this.history = [];
         this.redoHistory = [];
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.printCenteredSvg(this.history);
     }
 
     redrawCanvas() {
@@ -201,14 +199,6 @@ class DrawingApp {
             this.ctx.stroke();
             this.ctx.closePath();
         });
-    }
-
-    printCenteredSvg(pointsArray) {
-        const svgString = this.generateSvgCentered(pointsArray);
-        const svgContainer = document.querySelector('#svgContainer1');
-
-        svgContainer.innerHTML = svgString;
-        svgContainer.style.overflow = 'hidden';
     }
 
     generateSvgCentered(pointsArray) {
@@ -252,6 +242,35 @@ class DrawingApp {
             height: maxY - minY
         };
     }
+    async saveDrawingToDatabase() {
+        try {
+            const id = 1; // Remplacez par l'ID de l'utilisateur connecté
+            const draw_svg = this.generateSvgCentered(this.history);
+            if (!draw_svg) {
+                alert('Aucun dessin à sauvegarder.');
+                return;
+            }
+            const response = await fetch('/app/save-drawing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, draw_svg })
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                alert('Dessin sauvegardé avec succès : ' + result.message);
+            } else {
+                const error = await response.json();
+                alert('Erreur lors de la sauvegarde : ' + error.error);
+            }
+        } catch (err) {
+            console.error('Erreur lors de la requête :', err);
+            alert('Une erreur est survenue.');
+        }
+    }
+
 }
 
 const app = new DrawingApp();

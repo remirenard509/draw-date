@@ -41,6 +41,8 @@
                 if (response.ok) {
                     const result = await response.json();
                     alert('Connexion réussie : ' + JSON.stringify(result));
+                    //redirect to the draw page
+                    window.location.href = '/app/src/draw.html';
                 } else {
                     const error = await response.json();
                     alert('Erreur : ' + error.error);

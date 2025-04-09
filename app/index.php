@@ -17,6 +17,6 @@ try {
 } catch (\Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
-    error_log("🔥 Exception: " . $e->getMessage());
+    error_log(" Exception: " . $e->getMessage());
 }
 ?>
