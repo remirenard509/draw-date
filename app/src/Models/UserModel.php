@@ -98,4 +98,10 @@ class UserModel extends SqlConnect {
         'id' => $id
     ]);
   }
+  public function getIdByEmail($email) {
+    $query = "SELECT id FROM $this->table WHERE email = :email";
+    $stmt = $this->db->prepare($query);
+    $stmt->execute(['email' => $email]);
+    return $stmt->fetchColumn();
+  }
 }

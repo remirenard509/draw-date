@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil</title>
+</head>
+<body>
+    <script>
+        // Fonction pour récupérer et afficher les données utilisateur
+        async function fetchUserProfile() {
+            const id = localStorage.getItem('id');
+
+            try {
+                const response = await fetch('/app/user/' + id);
+                if (response.ok) {
+                    const data = await response.json();
+                    document.body.innerHTML = `
+                        <h1>Profil de ${data.username}</h1>
+                        <p>Age: ${data.dob}</p>
+                        <p>bio: ${data.bio}</p>
+                        <div class="svg-container">
+                            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                ${data.draw_svg}
+                            </svg>
+                        </div>
+
+                    `;
+                } else {
+                    document.body.innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
+                    console.error('Erreur lors de la récupération des données utilisateur');
+                }
+            } catch (error) {
+                document.body.innerHTML = '<p>Erreur de réseau.</p>';
+                console.error('Erreur de réseau:', error);
+            }
+        }
+
+        // Appel de la fonction pour récupérer les données utilisateur
+        fetchUserProfile();
+    </script>
+</body>
+</html>

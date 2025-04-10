@@ -246,7 +246,7 @@ class DrawingApp {
     }
     async saveDrawingToDatabase() {
         try {
-            const id = 1; // Remplacez par l'ID de l'utilisateur connecté
+            const id = localStorage.getItem('id');
             const draw_svg = this.generateSvgCentered(this.history);
             if (!draw_svg) {
                 alert('Aucun dessin à sauvegarder.');
@@ -279,7 +279,7 @@ class DrawingApp {
             return;
         }
         try {
-            const id = 1; // Remplacez par l'ID de l'utilisateur connecté
+            const id = localStorage.getItem('id');
             const response = await fetch('/app/save-description', {
                 method: 'POST',
                 headers: {

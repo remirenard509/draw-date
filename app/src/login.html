@@ -39,8 +39,14 @@
                 });
 
                 if (response.ok) {
-                    const result = await response.json();
+                    const result = await response.json(); 
+                    // Stocker l'ID et le token dans le localStorage
+                    localStorage.setItem('id', result.id);
+                    localStorage.setItem('token', result.token);
                     alert('Connexion réussie : ' + JSON.stringify(result));
+
+                 
+
                     //redirect to the draw page
                     window.location.href = '/app/src/draw.html';
                 } else {

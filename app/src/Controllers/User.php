@@ -22,11 +22,6 @@ class User extends Controller {
     return $this->user->delete(intval($this->params['id']));
   }
 
-  #[Route("GET", "/user/:id", middlewares: [AuthMiddleware::class])] 
-  public function getUser() {
-    return $this->user->get(intval($this->params['id']));
-  }
-
   #[Route("GET", "/users", middlewares: [AuthMiddleware::class])]
   public function getUsers() {
       $limit = isset($this->params['limit']) ? intval($this->params['limit']) : null;
@@ -86,6 +81,24 @@ class User extends Controller {
       } catch (\Exception $e) {
         error_log('Erreur : ' . $e->getMessage()); // Log de l'erreur
           throw new HttpException($e->getMessage(), 400);
+      }
+  }
+  #[Route("GET", "/user/:id")]
+  public function getUserByID() {
+      try {
+          $id = intval($this->params['id']);
+          return $this->user->get($id);
+      } catch (HttpException $e) {
+          throw $e;
+      }
+  }
+  #[Route("GET", "/users")]
+  public function getIdByEmail() {
+      try {
+          $email = $this->params['email'];
+          return $this->user->getIdByEmail($email);
+      } catch (HttpException $e) {
+          throw $e;
       }
   }
 }
