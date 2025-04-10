@@ -47,8 +47,6 @@ button {
     background-color: #314a4b;
     color: white;
     transition: background 0.3s;
-    width: 50px;
-    height: 50px;
     margin-bottom: 10px;
 }
 
@@ -56,9 +54,6 @@ button:hover {
     background-color: #577e80;
 }
 
-.smooth-on {
-    background-color: #729d9f;
-}
 textarea {
     overflow:hidden; 
     resize:none; 
