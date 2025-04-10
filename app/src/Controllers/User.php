@@ -10,6 +10,7 @@ use App\Middlewares\AuthMiddleware;
 
 class User extends Controller {
   protected object $user;
+  protected array $authorized_fields_to_update = ['password', 'username', 'avatar', 'bio'];
 
   public function __construct($param) {
     $this->user = new UserModel();
@@ -28,7 +29,7 @@ class User extends Controller {
       return $this->user->getAll($limit);
   }
 
-  #[Route("PATCH", "/user/:id", middlewares: [AuthMiddleware::class])]
+  #[Route("PATCH", "/user/:id")]
   public function updateUser() {
     try {
       $id = intval($this->params['id']);
