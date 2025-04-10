@@ -34,16 +34,37 @@ class User extends Controller {
       $id = intval($this->params['id']);
       $data = $this->body;
 
-      # Check if the data is empty
-      if (empty($data['username']) ||
-          empty($data['bio']) ||
-          empty($data['avatar'])) {
-        throw new HttpException("Missing parameters for the update.", 400);
+      # Vérifier si des données sont fournies
+      if (empty($data)) {
+        throw new HttpException("No data provided for the update.", 400);
       }
 
-      return $this->user->update($data, intval($id));
+      # Filtrer les champs valides
+      $validFields = ['username', 'bio', 'avatar', 'password'];
+      $filteredData = array_filter(
+        $data,
+        fn($key) => in_array($key, $validFields),
+        ARRAY_FILTER_USE_KEY
+      );
+
+      # Vérifier si des champs valides sont présents
+      if (empty($filteredData)) {
+        throw new HttpException("No valid fields provided for the update.", 400);
+      }
+
+      # Appeler la méthode de mise à jour dans le modèle
+      $result = $this->user->update($filteredData, $id);
+
+      if (!$result) {
+        throw new HttpException("Failed to update user.", 500);
+      }
+
+      return ['message' => 'User updated successfully'];
     } catch (HttpException $e) {
       throw $e;
+    } catch (\Exception $e) {
+      error_log('Erreur : ' . $e->getMessage());
+      throw new HttpException("An unexpected error occurred.", 500);
     }
   }
 
