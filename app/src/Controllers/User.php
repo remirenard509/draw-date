@@ -17,7 +17,7 @@ class User extends Controller {
     parent::__construct($param);
   }
 
-  #[Route("DELETE", "/user/:id")]
+  #[Route("DELETE", "/user/:id", middlewares: [AuthMiddleware::class])]
   public function deleteUser() {
     return $this->user->delete(intval($this->params['id']));
   }
@@ -28,7 +28,7 @@ class User extends Controller {
       return $this->user->getAll($limit);
   }
 
-  #[Route("PATCH", "/user/:id")]
+  #[Route("PATCH", "/user/:id", middlewares: [AuthMiddleware::class])]
   public function updateUser() {
     try {
       $id = intval($this->params['id']);
@@ -68,7 +68,7 @@ class User extends Controller {
     }
   }
 
-  #[Route("POST", "/save-drawing")]
+  #[Route("POST", "/save-drawing", middlewares: [AuthMiddleware::class])]
   public function saveDrawing() {
       try {
           $data = $this->body;
@@ -83,7 +83,7 @@ class User extends Controller {
       }
   }
 
-  #[Route("POST", "/save-description")]
+  #[Route("POST", "/save-description", middlewares: [AuthMiddleware::class])]
   public function saveDescription() {
       try {
           $data = $this->body;
@@ -97,7 +97,7 @@ class User extends Controller {
           throw new HttpException($e->getMessage(), 400);
       }
   }
-  #[Route("GET", "/user/:id")]
+  #[Route("GET", "/user/:id", middlewares: [AuthMiddleware::class])]
   public function getUserByID() {
       try {
           $id = intval($this->params['id']);
@@ -107,7 +107,7 @@ class User extends Controller {
       }
   }
   
-  #[Route("GET", "/draws")]
+  #[Route("GET", "/draws", middlewares: [AuthMiddleware::class])]
   public function getDraws() {
       try {
           return $this->user->getDraws();

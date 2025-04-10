@@ -17,7 +17,10 @@
             const id = localStorage.getItem('id');
             try {
                 const response = await fetch('/app/user/' + id, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
                 });
                 if (response.ok) {
                     alert('Profil supprimé avec succès.');

@@ -255,6 +255,7 @@ class DrawingApp {
             const response = await fetch('/app/save-drawing', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ id, draw_svg })
@@ -283,6 +284,7 @@ class DrawingApp {
             const response = await fetch('/app/save-description', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ id, draw_description })

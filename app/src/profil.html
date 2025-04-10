@@ -13,7 +13,13 @@
             const id = localStorage.getItem('id');
 
             try {
-                const response = await fetch('/app/user/' + id);
+                const response = await fetch('/app/user/' + id, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
                 if (response.ok) {
                     const data = await response.json();
                     document.body.innerHTML = `
