@@ -17,7 +17,7 @@ class User extends Controller {
     parent::__construct($param);
   }
 
-  #[Route("DELETE", "/user/:id", middlewares: [AuthMiddleware::class])]
+  #[Route("DELETE", "/user/:id")]
   public function deleteUser() {
     return $this->user->delete(intval($this->params['id']));
   }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delete</title>
+</head>
+<body>
+    <h1>Supprimer le profil</h1>
+    <p>Êtes-vous sûr de vouloir supprimer votre profil ?</p>
+    <button id="confirm-delete">Confirmer la suppression</button>
+    <button id="cancel-delete">Annuler</button>
+    <script>
+        document.getElementById('confirm-delete').addEventListener('click', async () => {
+            const id = localStorage.getItem('id');
+            try {
+                const response = await fetch('/app/user/' + id, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Profil supprimé avec succès.');
+                    window.location.href = '/app/src/login.html';
+                } else {
+                    alert('Erreur lors de la suppression du profil.');
+                }
+            } catch (error) {
+                console.error('Erreur de réseau:', error);
+            }
+        });
+
+        document.getElementById('cancel-delete').addEventListener('click', () => {
+            window.location.href = '/app/src/profil.html';
+        });
+    </script>
+</body>
+</html>
