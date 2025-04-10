@@ -10,7 +10,6 @@ use App\Middlewares\AuthMiddleware;
 
 class User extends Controller {
   protected object $user;
-  protected array $authorized_fields_to_update = ['password', 'username', 'avatar', 'bio'];
 
   public function __construct($param) {
     $this->user = new UserModel();
@@ -36,20 +35,13 @@ class User extends Controller {
       $data = $this->body;
 
       # Check if the data is empty
-      if (empty($data)) {
+      if (empty($data['username']) ||
+          empty($data['bio']) ||
+          empty($data['avatar'])) {
         throw new HttpException("Missing parameters for the update.", 400);
       }
 
-      # Check for missing fields
-      $missingFields = array_diff($this->user->authorized_fields_to_update, array_keys($data));
-      if (!empty($missingFields)) {
-        throw new HttpException("Missing fields: " . implode(", ", $missingFields), 400);
-      }
-
-      $this->user->update($data, intval($id));
-
-      # Let's return the updated user
-      return $this->user->get($id);
+      return $this->user->update($data, intval($id));
     } catch (HttpException $e) {
       throw $e;
     }

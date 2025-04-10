@@ -7,7 +7,7 @@ use stdClass;
 
 class UserModel extends SqlConnect {
     private $table = "users";
-    public $authorized_fields_to_update = ['firstname', 'name', 'address', 'phone', 'password'];
+    public $authorized_fields_to_update = ['username','bio', 'avatar', 'password'];
     private string $passwordSalt = "sqidq7sà";
 
     public function delete(int $id) {
@@ -63,6 +63,11 @@ class UserModel extends SqlConnect {
               $params[":$key"] = $value;
           }
       }
+
+      // Vérifier si des champs valides sont présents
+      if (empty($fields)) {
+        throw new \Exception("No valid fields to update");
+      }
       if (isset($data["password"])) {
         // Combine password with salt and hash it
         $saltedPassword = $data["password"] . $this->passwordSalt;
@@ -77,9 +82,7 @@ class UserModel extends SqlConnect {
       $query = $request . implode(", ", $fields) . " WHERE id = :id";
   
       $req = $this->db->prepare($query);
-      $req->execute($params);
-      
-      return $this->get($id);
+      return $req->execute($params);
     }
 
   public function saveDrawing($id, $draw_svg) {
