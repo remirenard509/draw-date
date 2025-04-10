@@ -15,6 +15,7 @@
             <textarea id="draw_description_try" placeholder="Description du dessin"></textarea>
             <text id="hint" text=""></text>
             <div>
+                <button onclick="displayHint()">Indice</button>
                 <button id="compareButton" onclick="compareDescriptions()">Comparer</button>
                 <button id="profil" onclick="window.location.href='/app/src/profil.html'">Mon profil</button>
                 <button onclick="logout()">Déconnexion</button>
@@ -49,7 +50,7 @@
                     const svgElement = document.createElement('div');
                     svgElement.innerHTML = randomDrawing.draw_svg;
                     drawsContainer.appendChild(svgElement);
-                    document.getElementById('hint').innerText = 'hint:' +capitalizeWords(randomDrawing.draw_description);
+                  
                     return randomDrawing;
 
                 } else {
@@ -76,12 +77,16 @@
                 alert('Les descriptions ne correspondent pas.');
             }
         }
+        function displayHint() {
+            const drawDescription = randomDrawing.draw_description;
+            const hintText = hint(drawDescription);
+            document.getElementById('hint').innerText = hintText;
+        }   
 
-
-        function capitalizeWords(description) {
+        function hint(description) {
             return description
                 .split(' ') // Divise la chaîne en mots
-                .map(word => word.charAt(0) + ". ") // Capitalise la première lettre de chaque mot
+                .map(word => word.charAt(0) + word.slice(1).split('').map(letter => '.').join(''))
                 .join(' '); // Recombine les mots en une seule chaîne
         }
         fetchUserDrawings(); 
