@@ -93,6 +93,10 @@ class Router {
                     } catch (\Exception $e) {
                         http_response_code(500);
                         $response = ["error" => $e->getMessage()];
+                    } catch (\Throwable $e) {
+                        http_response_code(500);
+                        echo json_encode(['error' => $e->getMessage()]);
+                        error_log("Router Exception: " . $e->getMessage());
                     }
                 } else {
                     http_response_code(405);

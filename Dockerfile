@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install mysqli \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && apt-get clean
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copier Composer depuis l'image officielle
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

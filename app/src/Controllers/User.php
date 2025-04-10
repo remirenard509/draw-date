@@ -106,15 +106,7 @@ class User extends Controller {
           throw $e;
       }
   }
-  #[Route("GET", "/users")]
-  public function getIdByEmail() {
-      try {
-          $email = $this->params['email'];
-          return $this->user->getIdByEmail($email);
-      } catch (HttpException $e) {
-          throw $e;
-      }
-  }
+  
   #[Route("GET", "/draws")]
   public function getDraws() {
       try {

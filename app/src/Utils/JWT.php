@@ -3,7 +3,11 @@
 namespace App\Utils;
 
 class JWT {
-  private static $secret = "mon-super-secret";
+  private static $secret;
+
+  public function __construct() {
+    self::$secret = getenv('JWT_SECRET');
+  }
 
   public static function generate($payload) {
     // Base 64
@@ -37,6 +41,6 @@ class JWT {
 }
   
   private static function base64UrlEncode($data) {
-    return rtrim(strtr(base64_encode($data), '+/', '-_'), characters: '=');
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
   }
 }

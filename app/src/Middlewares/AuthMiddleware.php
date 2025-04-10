@@ -25,7 +25,9 @@ class AuthMiddleware {
 
         // Verify the JWT and return the result
         if (!JWT::verify($jwt)) {
-            return $this->unauthorizedResponse();
+            echo json_encode(['error' => "Token invalide ou expiré"]);
+            http_response_code(401);
+            return false;
         }
 
         // Proceed with the request if JWT is valid

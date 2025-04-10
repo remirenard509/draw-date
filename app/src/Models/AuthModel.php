@@ -9,7 +9,12 @@ use \PDO;
 class AuthModel extends SqlConnect {
   private string $table  = "users";
   private int $tokenValidity = 3600;
-  private string $passwordSalt = "sqidq7sà";
+  private string $passwordSalt;
+
+  public function __construct() {
+    parent::__construct();
+    $this->passwordSalt = getenv('PASSWORD_SALT');
+  }
   
   public function register(array $data) {
     $query = "SELECT email FROM $this->table WHERE email = :email";

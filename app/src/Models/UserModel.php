@@ -8,7 +8,12 @@ use stdClass;
 class UserModel extends SqlConnect {
     private $table = "users";
     public $authorized_fields_to_update = ['username','bio', 'avatar', 'password'];
-    private string $passwordSalt = "sqidq7sà";
+    private string $passwordSalt;
+
+    public function __construct() {
+        parent::__construct();
+        $this->passwordSalt = getenv('PASSWORD_SALT');
+    }
 
     public function delete(int $id) {
       $req = $this->db->prepare("DELETE FROM $this->table WHERE id = :id");

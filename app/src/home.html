@@ -17,11 +17,17 @@
             <div>
                 <button id="compareButton" onclick="compareDescriptions()">Comparer</button>
                 <button id="profil" onclick="window.location.href='/app/src/profil.html'">Mon profil</button>
-                <button id="logoutButton" onclick="window.location.href='/app/src/login.html'">Se déconnecter</button>
+                <button onclick="logout()">Déconnexion</button>
             </div>
         </div>
     </div>
     <script>
+        //deconnexion supprime le local storage
+        function logout() {
+            localStorage.removeItem('id');
+            localStorage.removeItem('token');
+            window.location.href = '/app/src/login.html';
+        }
         let randomDrawing = null;
         // Fonction pour récupérer et afficher les dessins SVG
         async function fetchUserDrawings() {
