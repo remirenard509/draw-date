@@ -59,3 +59,10 @@ button:hover {
 .smooth-on {
     background-color: #729d9f;
 }
+textarea {
+    overflow:hidden; 
+    resize:none; 
+    font-family: 'Belleza', sans-serif; 
+    font-size: 16px; 
+    padding: 10px;
+}

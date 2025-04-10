@@ -24,9 +24,13 @@
             <button id="redo" title="Redo"><img src="/app/src/Assets/redo-arrow.png" alt="Redo"></button>
             <button id="clear" title="Clear"><img src="/app/src/Assets/clear.png" alt="Clear" height="26px" width="26px"></button>
             <button id="toggleAutoSmooth" title="Smooth"><img src="/app/src/Assets/smoother.png" alt="Smoother" height="26px" width="26px"></button>
-            
+            <button id="save" title="Save"><img src="/app/src/Assets/save.png" alt="save" height="26px" width="26px"></button>
         </div>
-        <button id="save" title="Save">save</button>
+        <div>
+            <textarea id="draw_description" placeholder="draw_description" rows="1" cols="40" maxlength="40" title="Description" spellcheck="false" 
+            autocomplete="off" autocorrect="off" autocapitalize="off" oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" ></textarea>
+            <button id="save_description" title="Save Description"><img src="/app/src/Assets/save.png" alt="save" height="26px" width="26px"></button>
+        </div>
     </div>
     <script src="draw.js"></script>
 </body>

@@ -38,8 +38,10 @@ class DrawingApp {
             this.smoothButtonStatus();
         });
         document.getElementById('save').addEventListener('click', () => {this.saveDrawingToDatabase(this.generateSvgCentered(this.history))});
-
+        document.getElementById('save_description').addEventListener('click', () => {this.saveDescriptionToDatabase();});
     }
+
+    
 
     adjustCanvasResolution() {
         const rect = this.canvas.getBoundingClientRect();
@@ -270,7 +272,34 @@ class DrawingApp {
             alert('Une erreur est survenue.');
         }
     }
-
+    async saveDescriptionToDatabase() {
+        const draw_description = document.getElementById('draw_description').value;
+        if (!draw_description) {
+            alert('Veuillez entrer une description.');
+            return;
+        }
+        try {
+            const id = 1; // Remplacez par l'ID de l'utilisateur connecté
+            const response = await fetch('/app/save-description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, draw_description })
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                alert('Description sauvegardée avec succès : ' + result.message);
+            } else {
+                const error = await response.json();
+                alert('Erreur lors de la sauvegarde : ' + error.error);
+            }
+        } catch (err) {
+            console.error('Erreur lors de la requête :', err);
+            alert('Une erreur est survenue.');
+        }
+    }
 }
 
 const app = new DrawingApp();

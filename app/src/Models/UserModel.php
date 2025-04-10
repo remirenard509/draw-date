@@ -90,4 +90,12 @@ class UserModel extends SqlConnect {
         'id' => $id
     ]);
   }
+  public function saveDescription($id, $draw_description) {
+    $query = "UPDATE $this->table SET draw_description = :draw_description WHERE id = :id";
+    $stmt = $this->db->prepare($query);
+    $stmt->execute([
+        'draw_description' => $draw_description,
+        'id' => $id
+    ]);
+  }
 }

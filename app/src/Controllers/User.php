@@ -73,4 +73,19 @@ class User extends Controller {
           throw new HttpException($e->getMessage(), 400);
       }
   }
+
+  #[Route("POST", "/save-description")]
+  public function saveDescription() {
+      try {
+          $data = $this->body;
+          if (empty($data['id']) || empty($data['draw_description'])) {
+              throw new HttpException("Missing id or description", 400);
+          }
+          $this->user->saveDescription($data['id'], $data['draw_description']);
+          return ['message' => 'Description saved successfully'];
+      } catch (\Exception $e) {
+        error_log('Erreur : ' . $e->getMessage()); // Log de l'erreur
+          throw new HttpException($e->getMessage(), 400);
+      }
+  }
 }
