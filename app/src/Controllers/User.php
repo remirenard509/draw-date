@@ -115,4 +115,12 @@ class User extends Controller {
           throw $e;
       }
   }
+  #[Route("GET", "/draws")]
+  public function getDraws() {
+      try {
+          return $this->user->getDraws();
+      } catch (HttpException $e) {
+          throw $e;
+      }
+  }
 }

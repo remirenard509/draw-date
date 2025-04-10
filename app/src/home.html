@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon">
+</head>
+<body>
+    <h2>Bienvenue sur draw date</h2>
+    <div class ="container">
+        <div id="draws-container"></div>
+        <div id="description-container">
+            <textarea id="draw_description_try" placeholder="Description du dessin"></textarea>
+            <text id="hint" text=""></text>
+            <div>
+                <button id="compareButton" onclick="compareDescriptions()">Comparer</button>
+                <button id="profil" onclick="window.location.href='/app/src/profil.html'">Mon profil</button>
+                <button id="logoutButton" onclick="window.location.href='/app/src/login.html'">Se déconnecter</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let randomDrawing = null;
+        // Fonction pour récupérer et afficher les dessins SVG
+        async function fetchUserDrawings() {
+            try {
+                const response = await fetch('/app/draws/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json(); // Récupère les données JSON
+                    const drawsContainer = document.getElementById('draws-container');
+
+                    const randomIndex = Math.floor(Math.random() * data.length);
+                    randomDrawing = data[randomIndex];
+                    const svgElement = document.createElement('div');
+                    svgElement.innerHTML = randomDrawing.draw_svg;
+                    drawsContainer.appendChild(svgElement);
+                    document.getElementById('hint').innerText = 'hint:' +capitalizeWords(randomDrawing.draw_description);
+                    return randomDrawing;
+
+                } else {
+                    const error = await response.json();
+                    alert('Erreur : ' + error.error);
+                }
+            } catch (err) {
+                console.error('Erreur lors de la requête :', err);
+                alert('Une erreur est survenue.');
+            }
+        }
+
+        function compareDescriptions() {
+            if (!randomDrawing) {
+                alert('Aucun dessin à comparer. Veuillez d\'abord charger un dessin.');
+                return;
+            }
+            const drawDescriptionTry = document.getElementById('draw_description_try').value;
+            const drawDescriptionFromServer = randomDrawing.draw_description;
+
+            if (drawDescriptionTry.trim() === drawDescriptionFromServer.trim()) {
+                alert('Les descriptions correspondent !');
+            } else {
+                alert('Les descriptions ne correspondent pas.');
+            }
+        }
+
+
+        function capitalizeWords(description) {
+            return description
+                .split(' ') // Divise la chaîne en mots
+                .map(word => word.charAt(0) + ". ") // Capitalise la première lettre de chaque mot
+                .join(' '); // Recombine les mots en une seule chaîne
+        }
+        fetchUserDrawings(); 
+
+    </script>
+</body>
+</html>

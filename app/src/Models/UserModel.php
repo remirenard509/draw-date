@@ -107,4 +107,10 @@ class UserModel extends SqlConnect {
     $stmt->execute(['email' => $email]);
     return $stmt->fetchColumn();
   }
+  public function getDraws() {
+    $query = "SELECT id, draw_svg, draw_description FROM $this->table WHERE draw_svg IS NOT NULL";
+    $stmt = $this->db->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 }
