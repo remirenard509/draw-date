@@ -59,12 +59,14 @@ class DrawApp {
         this.index = (this.index + 1) % this.data.length;
         this.displayDrawing(this.data[this.index]);
         this.hideHint();
+        this.hidedescription();
     }
 
     previousDrawing() {
         this.index = (this.index - 1 + this.data.length) % this.data.length;
         this.displayDrawing(this.data[this.index]);
         this.hideHint();
+        this.hidedescription();
     }
 
     compareDescriptions() {
@@ -89,6 +91,9 @@ class DrawApp {
     }
     hideHint() {
         document.getElementById('hint').innerText = '';
+    }
+    hidedescription() {
+        document.getElementById('draw_description_try').value = '';
     }
 
     hint(description) {
