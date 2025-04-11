@@ -83,3 +83,11 @@ input {
     margin-right: auto;
     width: 90%;
 }
+text {
+    font-family: "Belleza", sans-serif;
+    font-size: 30px;
+    color: #314a4b;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
