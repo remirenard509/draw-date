@@ -27,7 +27,7 @@ class DrawApp {
             });
 
             if (response.ok) {
-                return await response.json(); // Récupère les données JSON
+                return await response.json();
             } else {
                 const error = await response.json();
                 alert('Erreur : ' + error.error);
@@ -42,7 +42,7 @@ class DrawApp {
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Échange des éléments
+            [array[i], array[j]] = [array[j], array[i]];
         }
     }
 
@@ -77,10 +77,14 @@ class DrawApp {
         const drawDescriptionTry = document.getElementById('draw_description_try').value.toLowerCase();
         const drawDescriptionFromServer = this.randomDrawing.draw_description.toLowerCase();
 
-        if (drawDescriptionTry.trim() === drawDescriptionFromServer.trim()) {
+        const trimmedTry = drawDescriptionTry.trim();
+        const trimmedServer = drawDescriptionFromServer.trim();
+
+        if (trimmedTry === trimmedServer) {
             alert('Les descriptions correspondent !');
         } else {
-            alert('Les descriptions ne correspondent pas.');
+            
+           this.displayHintTry();
         }
     }
 
@@ -89,6 +93,13 @@ class DrawApp {
         const hintText = this.hint(drawDescription);
         document.getElementById('hint').innerText = hintText;
     }
+
+    displayHintTry() {  
+        const tryInput = document.getElementById('draw_description_try').value;
+        const hintText = this.hintTry(this.randomDrawing.draw_description, tryInput);
+        document.getElementById('hint').innerText = hintText;
+    }
+
     hideHint() {
         document.getElementById('hint').innerText = '';
     }
@@ -98,9 +109,25 @@ class DrawApp {
 
     hint(description) {
         return description
-            .split(' ') // Divise la chaîne en mots
+            .split(' ')
             .map(word => word.charAt(0) + word.slice(1).split('').map(letter => '.').join(''))
-            .join(' '); // Recombine les mots en une seule chaîne
+            .join(' ');
+    }
+    hintTry(description, tryInput) {
+        const descriptionArray = description.toLowerCase().split('');
+        const tryArray = tryInput.toLowerCase().split('');
+    
+        return descriptionArray
+            .map((char, index) => {
+                if (char === ' ') {
+                    return ' ';
+                } else if (char === tryArray[index]) {
+                    return char;
+                } else {
+                    return '.';
+                }
+            })
+            .join('');
     }
 
     logout() {
