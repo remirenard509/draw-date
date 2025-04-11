@@ -7,6 +7,7 @@ use App\Models\UserModel;
 use App\Utils\Route;
 use App\Utils\HttpException;
 use App\Middlewares\AuthMiddleware;
+use App\Utils\JWT;
 
 class User extends Controller {
   protected object $user;
@@ -98,15 +99,18 @@ class User extends Controller {
       }
   }
   #[Route("GET", "/user/:id", middlewares: [AuthMiddleware::class])]
-  public function getUserByID() {
+  public function getUser() {
       try {
-          $id = intval($this->params['id']);
-          return $this->user->get($id);
-      } catch (HttpException $e) {
+        $id = intval($this->params['id']);
+         if (!$this->validateAccess($id)) {
+            throw new HttpException("Invalid ID format", 400);
+          }
+          return $this->user->getById($id);
+        } catch (HttpException $e) {
           throw $e;
-      }
-  }
-  
+        }
+ } 
+
   #[Route("GET", "/draws", middlewares: [AuthMiddleware::class])]
   public function getDraws() {
       try {
@@ -115,4 +119,31 @@ class User extends Controller {
           throw $e;
       }
   }
+
+  private function validateAccess(int $id) {
+    try {
+    $id = intval($this->params['id']);
+    $token = $this->getHeader();
+    $jwt = $token['Authorization'];
+    $jwt = str_replace('Bearer ', '', $jwt);
+    if(JWT::isExpired($jwt)) {
+      throw new HttpException("Token expired", 401);
+    }
+    if (JWT::verify($jwt) === false) {
+      throw new HttpException("Invalid token", 401);
+    }
+    $payLoad = JWT::getPayLoad($jwt);    
+    $idFromToken = $payLoad['id'];
+    if ($id === intval($idFromToken)) {
+      return true;
+    }
+    return false;
+    } catch (HttpException $e) {
+      throw $e;
+    } catch (\Exception $e) {
+      error_log('Erreur : ' . $e->getMessage());
+      throw new HttpException("An unexpected error occurred.", 500);
+    }
+  }
+  
 }

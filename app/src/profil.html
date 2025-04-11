@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon">
 </head>
 <body>
     <script>
@@ -45,6 +46,9 @@
                 } else {
                     document.body.innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
                     console.error('Erreur lors de la récupération des données utilisateur');
+                    setTimeout(() => {
+                        window.location.href = '/app/src/login.html';
+                    }, 2000);
                 }
             } catch (error) {
                 document.body.innerHTML = '<p>Erreur de réseau.</p>';

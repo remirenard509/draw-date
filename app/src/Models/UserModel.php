@@ -14,14 +14,14 @@ class UserModel extends SqlConnect {
         parent::__construct();
         $this->passwordSalt = getenv('PASSWORD_SALT');
     }
-
+    
     public function delete(int $id) {
       $req = $this->db->prepare("DELETE FROM $this->table WHERE id = :id");
       $req->execute(["id" => $id]);
       return new stdClass();
     }
 
-    public function get(int $id) {
+    public function getById(int $id) {
       $req = $this->db->prepare("SELECT * FROM users WHERE id = :id");
       $req->execute(["id" => $id]);
 

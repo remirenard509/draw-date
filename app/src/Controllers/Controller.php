@@ -16,6 +16,10 @@ class Controller {
 
     $this->header();
   }
+  protected function getHeader(){
+    $headers = getallheaders();
+    return $headers;
+  }
 
   protected function getCallerClassName() {
     $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);

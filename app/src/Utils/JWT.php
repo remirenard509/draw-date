@@ -28,19 +28,36 @@ class JWT {
   }
 
   public static function verify($jwt) {
-    // Ensure the JWT has the correct number of segments
+
     $segments = explode('.', $jwt);
     if (count($segments) !== 3) {
-        return false;  // Invalid JWT structure
+        return false;
     }
 
     list($header, $payload, $signature) = $segments;
     $expectedSignature = self::base64UrlEncode(hash_hmac('sha256', "$header.$payload", self::$secret, true));
     
     return hash_equals($expectedSignature, $signature);
-}
+ }
   
   private static function base64UrlEncode($data) {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+  }
+
+  public static function getPayLoad($jwt) {
+    $segments = explode('.', $jwt);
+    if (count($segments) !== 3) {
+        return null;
+    }
+
+    list(, $payload) = $segments;
+    return json_decode(base64_decode($payload), true);
+  }
+  public static function isExpired($jwt) {
+    $payload = self::getPayLoad($jwt);
+    if ($payload && isset($payload['exp'])) {
+        return $payload['exp'] < time();
+    }
+    return true;
   }
 }

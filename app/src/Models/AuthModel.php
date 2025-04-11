@@ -73,9 +73,9 @@ class AuthModel extends SqlConnect {
 
   private function generateJWT(string $userId) {
     $payload = [
-      'user_id' => $userId,
+      'id' => $userId,
       'exp' => time() + $this->tokenValidity
     ];
     return JWT::generate($payload);
-  }  
+  }
 }

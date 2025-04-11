@@ -6,9 +6,8 @@ services:
     container_name: draw-api
     restart: always
     volumes:
-      - ./app:/var/www/html
-       - ./.env:/var/www/html/.env 
-      - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+       - ./:/var/www/html/
+       - ./000-default.conf:/etc/apache2/sites-available/000-default.conf
     depends_on:
       - mysql
     environment:
