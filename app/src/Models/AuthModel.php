@@ -52,6 +52,19 @@ class AuthModel extends SqlConnect {
   }
 
   public function login($email, $password) {
+    $query = "Select * from admin where email = :email";
+    $req = $this->db->prepare($query);
+    $req->execute(['email' => $email]);
+    $admin = $req->fetch(PDO::FETCH_ASSOC);
+    if ($admin) {
+        // Combine input password with salt and verify
+        $saltedPassword = $password . $this->passwordSalt;
+        
+        if (password_verify($saltedPassword, $admin['password'])) {
+            $token = $this->generateJWT($admin['id']);
+            return ['token' => $token, 'id' => $admin['id'], 'admin' => true];
+        }
+    }
     $query = "SELECT * FROM $this->table WHERE email = :email";
     $req = $this->db->prepare($query);
     $req->execute(['email' => $email]);
@@ -64,7 +77,7 @@ class AuthModel extends SqlConnect {
         
         if (password_verify($saltedPassword, $user['password'])) {
             $token = $this->generateJWT($user['id']);
-            return ['token' => $token, 'id' => $user['id']];
+            return ['token' => $token, 'id' => $user['id'], 'admin' => false];
         }
     }
 

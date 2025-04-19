@@ -45,12 +45,11 @@
                     // Stocker l'ID et le token dans le localStorage
                     localStorage.setItem('id', result.id);
                     localStorage.setItem('token', result.token);
-                    alert('Connexion réussie : ' + JSON.stringify(result));
-
-                 
-
-                    //redirect to the draw page
-                    window.location.href = '/app/src/profil.html';
+                    if(result.admin){
+                        window.location.href = '/app/src/admin.html';
+                    }
+                    else {
+                    window.location.href = '/app/src/profil.html';}
                 } else {
                     const error = await response.json();
                     alert('Erreur : ' + error.error);

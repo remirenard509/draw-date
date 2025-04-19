@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon">
+</head>
+<body>
+    <h1>Admin</h1>
+    <p>Bienvenue dans la section admin.</p>
+    <div> 
+        <h2>Liste des utilisateurs</h2>
+        <ul id="user-list"></ul>
+    </div>
+    <button id="logout">Déconnexion</button>
+
+    <script>
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/app/src/login.html';
+        });
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/app/users', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    const users = await response.json();
+                    const userList = document.getElementById('user-list');
+                    userList.innerHTML = '';
+                    users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = `${user.username} ${user.email}`;
+                        userList.appendChild(li);
+                    });
+                } else {
+                    console.error('Erreur lors de la récupération des utilisateurs.');
+                }
+            } catch (error) {
+                console.error('Erreur de réseau:', error);
+            }
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
