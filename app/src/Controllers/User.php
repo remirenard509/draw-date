@@ -119,6 +119,19 @@ class User extends Controller {
           throw $e;
       }
   }
+  #[Route("PATCH", "/user/:id/activated", middlewares: [AuthMiddleware::class])]
+  public function updateactive() {
+   try {
+      $id = intval($this->params['id']);
+      $data = $this->body;
+      return $this->user->updateActivated($data, $id);
+    } catch (HttpException $e) {
+      throw $e;
+    } catch (\Exception $e) {
+      error_log('Erreur : ' . $e->getMessage());
+      throw new HttpException("An unexpected error occurred.", 500);
+    }
+  }
 
   private function validateAccess(int $id) {
     try {

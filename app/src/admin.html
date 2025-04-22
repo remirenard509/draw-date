@@ -36,6 +36,9 @@
                     users.forEach(user => {
                         const li = document.createElement('li');
                         li.textContent = `${user.username} ${user.email}`;
+                        li.innerHTML += `
+                        <button class="activated" data-id="${user.id}">${user.activated ? 'Désactiver' : 'Activer'}</button>
+                        <button class="delete" data-id="${user.id}">Supprimer</button>`;
                         userList.appendChild(li);
                     });
                 } else {
@@ -47,6 +50,44 @@
         }
 
         fetchUsers();
+        document.getElementById('user-list').addEventListener('click', async (event) => {
+            if (event.target.classList.contains('activated')) {
+                const userId = event.target.dataset.id;
+                const isActivated = event.target.textContent === 'Désactiver';
+
+                try {
+                const response = await fetch(`/app/user/${userId}/activated`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ activated: !isActivated })
+                });
+                if (response.ok) {
+                    event.target.textContent = isActivated ? 'Activer' : 'Désactiver';
+                    event.target.dataset.activated = (!isActivated).toString();
+                } else {
+                    console.error('Erreur lors de la mise à jour de l\'activation de l\'utilisateur.');
+                }
+                } catch (error) {
+                    console.error('Erreur de réseau:', error);
+                }
+            } else if (event.target.classList.contains('delete')) {
+                const userId = event.target.dataset.id;
+                const response = await fetch(`/app/user/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                if (response.ok) {
+                    fetchUsers();
+                } else {
+                    console.error('Erreur lors de la suppression de l\'utilisateur.');
+                }
+            }
+        });
     </script>
 </body>
 </html>

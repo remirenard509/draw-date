@@ -59,7 +59,6 @@ class UserModel extends SqlConnect {
       $params = [];
       $fields = [];
   
-      # Prepare the query dynamically based on the provided data
       foreach ($data as $key => $value) {
           if (in_array($key, $this->authorized_fields_to_update)) {
 
@@ -68,17 +67,12 @@ class UserModel extends SqlConnect {
               $params[":$key"] = $value;
           }
       }
-
-      // Vérifier si des champs valides sont présents
       if (empty($fields)) {
         throw new \Exception("No valid fields to update");
       }
       if (isset($data["password"])) {
-        // Combine password with salt and hash it
         $saltedPassword = $data["password"] . $this->passwordSalt;
         $hashedPassword = password_hash($saltedPassword, PASSWORD_BCRYPT);
-    
-        // Ajouter le password hashé aux paramètres et aux champs
         $fields[] = "password = :password";
         $params[":password"] = $hashedPassword;
       }
@@ -117,5 +111,20 @@ class UserModel extends SqlConnect {
     $stmt = $this->db->prepare($query);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+  public function updateActivated(array $data, int $id) {
+    try {
+    $query = "UPDATE $this->table SET activated = :activated WHERE id = :id";
+    $stmt = $this->db->prepare($query);
+    
+    return $stmt->execute([
+        'activated' => (int) $data['activated'],
+        'id' => $id
+    ]);
+  }
+  catch (\Exception $e) {
+    error_log('Erreur : ' . $e->getMessage());
+    throw new \Exception("An unexpected error occurred.", 500);
+  }
   }
 }
