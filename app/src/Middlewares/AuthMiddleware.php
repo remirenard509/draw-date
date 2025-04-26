@@ -6,39 +6,40 @@ use App\Utils\JWT;
 
 class AuthMiddleware {
     public function handle($request) {
-        $headers = getallheaders();
-        
-        // Check if the Authorization header is set
-        if (!isset($headers['Authorization'])) {
-            // Return an appropriate response or throw an exception
-            return $this->unauthorizedResponse();
-        }
+        try {
+            $headers = getallheaders();
 
-        $authHeader = $headers['Authorization'];
+            // Vérifiez si le header Authorization est présent
+            if (!isset($headers['Authorization'])) {
+                throw new \Exception("Authorization header missing", 401);
+            }
 
-        // Check if the Authorization header contains a bearer token
-        if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            return $this->unauthorizedResponse();
-        }
+            $authHeader = $headers['Authorization'];
 
-        $jwt = $matches[1];
+            // Vérifiez si le header Authorization contient un token Bearer
+            if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+                throw new \Exception("Invalid Authorization header format", 401);
+            }
 
-        // Verify the JWT and return the result
-        if (!JWT::verify($jwt)) {
-            echo json_encode(['error' => "Token invalide ou expiré"]);
-            http_response_code(401);
+            $jwt = $matches[1];
+
+            // Vérifiez la validité du JWT
+            if (!JWT::verify($jwt)) {
+                throw new \Exception("Invalid or expired token", 401);
+            }
+
+            // Si tout est valide, continuez la requête
+            return true;
+        } catch (\Exception $e) {
+            // Gérez les erreurs et retournez une réponse appropriée
+            $this->unauthorizedResponse($e->getMessage());
             return false;
         }
-
-        // Proceed with the request if JWT is valid
-        return true;
     }
 
-    // Helper method to return an unauthorized response
-    private function unauthorizedResponse() {
-        // Here, you could return a response with a 401 status code and an error message
-        echo json_encode(['error' => "Unauthorized"]);
+    // Méthode helper pour retourner une réponse 401 Unauthorized
+    private function unauthorizedResponse($message) {
+        echo json_encode(['error' => $message]);
         http_response_code(401);
-        return false;
     }
 }

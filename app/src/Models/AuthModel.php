@@ -7,88 +7,86 @@ use App\Utils\{HttpException, JWT};
 use \PDO;
 
 class AuthModel extends SqlConnect {
-  private string $table  = "users";
-  private int $tokenValidity = 3600;
-  private string $passwordSalt;
+    private string $userTable = "users";
+    private string $adminTable = "admin";
+    private int $tokenValidity = 3600 * 24 * 30; // 30 jours en secondes
+    private string $passwordSalt;
 
-  public function __construct() {
-    parent::__construct();
-    $this->passwordSalt = getenv('PASSWORD_SALT');
-  }
-  
-  public function register(array $data) {
-    $query = "SELECT email FROM $this->table WHERE email = :email";
-    $req = $this->db->prepare($query);
-    $req->execute(["email" => $data["email"]]);
-    
-    if ($req->rowCount() > 0) {
-      throw new HttpException("User already exists!", 400);
+    public function __construct() {
+        parent::__construct();
+        $this->passwordSalt = getenv('PASSWORD_SALT') ?: '';
     }
 
-    // Combine password with salt and hash it
-    $saltedPassword = $data["password"] . $this->passwordSalt;
-    $hashedPassword = password_hash($saltedPassword, PASSWORD_BCRYPT);
+    public function register(array $data) {
+        $query = "SELECT email FROM {$this->userTable} WHERE email = :email";
+        $req = $this->db->prepare($query);
+        $req->execute(["email" => $data["email"]]);
 
-    // Create the user
-    $query_add = "INSERT INTO $this->table (email, password, username, gender, search_gender, dob, bio ) 
-    VALUES (:email, :password, :username, :gender, :search_gender, :dob, :bio)";
-    $req2 = $this->db->prepare($query_add);
-    $req2->execute([
-      "email" => $data["email"],
-      "password" => $hashedPassword,
-      "username" => $data["username"],
-      "gender" => $data["gender"],
-      "search_gender" => $data["search_gender"],
-      "dob" => $data["dob"],
-      "bio" => $data["bio"]
-    ]);
+        if ($req->rowCount() > 0) {
+            throw new HttpException("User already exists!", 400);
+        }
 
-    $userId = $this->db->lastInsertId();
+        // Hash du mot de passe avec un "pepper" si défini
+        $saltedPassword = $data["password"] . $this->passwordSalt;
+        $hashedPassword = password_hash($saltedPassword, PASSWORD_BCRYPT);
 
-    // Generate the JWT token
-    $token = $this->generateJWT($userId);
+        $query_add = "INSERT INTO {$this->userTable} 
+            (email, password, username, gender, search_gender, dob, bio) 
+            VALUES (:email, :password, :username, :gender, :search_gender, :dob, :bio)";
 
-    return ['token' => $token];
-  }
+        $req2 = $this->db->prepare($query_add);
+        $req2->execute([
+            "email" => $data["email"],
+            "password" => $hashedPassword,
+            "username" => $data["username"],
+            "gender" => $data["gender"],
+            "search_gender" => $data["search_gender"],
+            "dob" => $data["dob"],
+            "bio" => $data["bio"]
+        ]);
 
-  public function login($email, $password) {
-    $query = "Select * from admin where email = :email";
-    $req = $this->db->prepare($query);
-    $req->execute(['email' => $email]);
-    $admin = $req->fetch(PDO::FETCH_ASSOC);
-    if ($admin) {
-        // Combine input password with salt and verify
-        $saltedPassword = $password . $this->passwordSalt;
-        
-        if (password_verify($saltedPassword, $admin['password'])) {
+        $userId = $this->db->lastInsertId();
+        $token = $this->generateJWT($userId);
+
+        return ['token' => $token];
+    }
+
+    public function login(string $email, string $password) {
+        // Admin login
+        $queryAdmin = "SELECT * FROM {$this->adminTable} WHERE email = :email";
+        $reqAdmin = $this->db->prepare($queryAdmin);
+        $reqAdmin->execute(['email' => $email]);
+        $admin = $reqAdmin->fetch(PDO::FETCH_ASSOC);
+
+        if ($admin && $this->verifyPassword($password, $admin['password'])) {
             $token = $this->generateJWT($admin['id']);
             return ['token' => $token, 'id' => $admin['id'], 'admin' => true];
         }
-    }
-    $query = "SELECT * FROM $this->table WHERE email = :email";
-    $req = $this->db->prepare($query);
-    $req->execute(['email' => $email]);
 
-    $user = $req->fetch(PDO::FETCH_ASSOC);
+        // User login
+        $queryUser = "SELECT * FROM {$this->userTable} WHERE email = :email";
+        $reqUser = $this->db->prepare($queryUser);
+        $reqUser->execute(['email' => $email]);
+        $user = $reqUser->fetch(PDO::FETCH_ASSOC);
 
-    if ($user) {
-        // Combine input password with salt and verify
-        $saltedPassword = $password . $this->passwordSalt;
-        
-        if (password_verify($saltedPassword, $user['password'])) {
+        if ($user && $this->verifyPassword($password, $user['password'])) {
             $token = $this->generateJWT($user['id']);
             return ['token' => $token, 'id' => $user['id'], 'admin' => false];
         }
+
+        throw new HttpException("Invalid credentials.", 401);
     }
 
-    throw new \Exception("Invalid credentials.");
-  }
+    private function verifyPassword(string $inputPassword, string $hashedPassword): bool {
+        $saltedPassword = $inputPassword . $this->passwordSalt;
+        return password_verify($saltedPassword, $hashedPassword);
+    }
 
-  private function generateJWT(string $userId) {
-    $payload = [
-      'id' => $userId,
-      'exp' => time() + $this->tokenValidity
-    ];
-    return JWT::generate($payload);
-  }
+    private function generateJWT(string $userId): string {
+        $payload = [
+            'id' => $userId,
+            'exp' => time() + $this->tokenValidity
+        ];
+        return JWT::generate($payload);
+    }
 }

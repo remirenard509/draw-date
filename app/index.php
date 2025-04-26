@@ -1,7 +1,7 @@
 <?php
 
 use App\Router;
-use App\Controllers\{User, Auth};
+use App\Controllers\{User, Auth, Chat};
 
 try {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -9,6 +9,7 @@ try {
     $controllers = [
         User::class,
         Auth::class,
+        Chat::class
     ];
 
     $router = new Router();
