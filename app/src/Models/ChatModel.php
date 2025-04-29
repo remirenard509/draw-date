@@ -42,4 +42,40 @@ class ChatModel extends SqlConnect {
         throw new \Exception("Failed to get message.");
     }
   }
+
+  public function match($user1_id, $user2_id) {
+    try {
+      $query = "INSERT INTO `match`(`user1_id`, `user2_id`) VALUES (:user1_id, :user2_id)";
+      $stmt = $this->db->prepare($query);
+      $stmt->execute([
+          'user1_id' => $user1_id,
+          'user2_id' => $user2_id
+      ]);
+      } catch  (\PDOException $e) {
+          error_log('Erreur SQL : ' . $e->getMessage());
+          throw new \Exception("Failed to match.");
+      }
+    }
+    public function getMatch($id) {
+      try {
+      $query = "SELECT u.id, u.username
+      FROM `match` m
+      JOIN users u ON u.id = 
+          CASE 
+              WHEN m.user1_id = :id THEN m.user2_id
+              ELSE m.user1_id
+          END
+      WHERE m.user1_id = :id OR m.user2_id = :id;
+      ";
+      $stmt = $this->db->prepare($query);
+      $stmt->execute([
+          'id' => $id
+      ]);
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch  (\PDOException $e) {
+          error_log('Erreur SQL : ' . $e->getMessage());
+          throw new \Exception("Failed to get message.");
+      }
+    }
+  
 }

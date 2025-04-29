@@ -34,4 +34,18 @@ class Chat extends Controller {
     $this->chat->sendMessage($senderId, $receiverId, $content);
     return true;
   }
+  #[Route("POST", "/match", middlewares: [AuthMiddleware::class])]
+  public function match() {
+    $data = $this->body;
+    $user1_id = $data['user1_id'];
+    $user2_id = $data['user2_id'];
+    $this->chat->match($user1_id, $user2_id);
+    return true;
+  }
+  #[Route("GET", "/match/:id", middlewares: [AuthMiddleware::class])]
+  public function getMatch() {
+    $id = intval($this->params['id']);
+    return $this->chat->getMatch($id);
+  }
+
 }

@@ -11,7 +11,7 @@ class ChatApp {
         this.contentDiv = document.getElementById('content');
 
         this.addEventListeners();
-        this.getUsers();
+        this.getMatch();
     }
 
     addEventListeners() {
@@ -46,6 +46,27 @@ class ChatApp {
                 this.getMessages(receiverId);
             } else {
                 console.error('Erreur lors de l\'envoi');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        }
+    }
+
+    async getMatch() {
+        try {
+            const response = await fetch(`/app/match/${this.id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                this.populateUserSelect(data);
+
+            } else {
+                console.error('Erreur lors de la récupération des matchs');
             }
         } catch (error) {
             console.error('Erreur réseau :', error);
@@ -96,12 +117,18 @@ class ChatApp {
     populateUserSelect(users) {
         this.userSelect.innerHTML = '<option value="">--Sélectionner un utilisateur--</option>';
 
-        users.forEach(user => {
+        const uniqueUsers = users.filter(
+            (user, index, self) =>
+                index === self.findIndex(u => u.id === user.id)
+        );
+        
+        uniqueUsers.forEach(user => {
             const option = document.createElement('option');
             option.value = user.id;
             option.textContent = user.username;
             this.userSelect.appendChild(option);
         });
+        
     }
 
     displayMessages(messages) {

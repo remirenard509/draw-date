@@ -4,6 +4,8 @@ class DrawApp {
         this.index = 0;
         this.randomDrawing = null;
         this.init();
+        this.id = localStorage.getItem('id');
+        this.token = localStorage.getItem('token');
     }
 
     async init() {
@@ -81,10 +83,34 @@ class DrawApp {
         const trimmedServer = drawDescriptionFromServer.trim();
 
         if (trimmedTry === trimmedServer) {
-            alert('Les descriptions correspondent !');
+            this.match();
+            alert('vous avez matché !');
+
+
         } else {
             
            this.displayHintTry();
+        }
+    }
+
+    async match() {
+        try {
+            const response = await fetch(`/app/match`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user1_id: this.id, user2_id: this.randomDrawing.id })
+            });
+
+            if (response.ok) {
+            
+            } else {
+                console.error('Erreur lors du match');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
         }
     }
 
