@@ -32,3 +32,6 @@ button:hover {
 label, textarea {
     margin-top: 20px;
 }
+canvas {
+    border: 1px solid #314a4b;
+}

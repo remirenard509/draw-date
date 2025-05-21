@@ -4,11 +4,13 @@ class ChatApp {
         this.id = localStorage.getItem('id');
         this.selectedUserId = null;
         this.message = "";
+        this.draw = "";
 
         this.userSelect = document.getElementById('userSelect');
         this.messageInput = document.getElementById('messageInput');
         this.sendButton = document.getElementById('sendButton');
         this.contentDiv = document.getElementById('content');
+        this.sendDraw = document.getElementById('sendDraw');
 
         this.addEventListeners();
         this.getMatch();
@@ -28,6 +30,12 @@ class ChatApp {
                 this.sendMessage(this.id,this.selectedUserId, this.message);
                 this.messageInput.value = '';
             }  
+        });
+        this.sendDraw.addEventListener('click', () => {
+            this.draw = localStorage.getItem('draw');
+            if (this.draw && this.selectedUserId) {
+            this.sendMessage(this.id,this.selectedUserId, this.draw);
+            }
         });
     }
 
@@ -135,7 +143,12 @@ class ChatApp {
         this.contentDiv.innerHTML = '';
         messages.forEach(msg => {
             const p = document.createElement('p');
+            if (msg.content.includes('svg')){
+                p.innerHTML = msg.content; 
+
+            } else {
             p.textContent = `${msg.username}: ${msg.content}`;
+            }
             this.contentDiv.appendChild(p);
         });
     }

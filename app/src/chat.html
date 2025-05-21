@@ -18,6 +18,22 @@
     
     <textarea id="messageInput" placeholder="Écrivez votre message ici..."></textarea>
     <button id="sendButton"><img src="/app/src/Assets/send.png" alt="send" height="26px" width="26px"></button>
+
+     <div id="app">
+        <div class="canvas">  
+            <canvas id="canvas"></canvas>
+        </div>
+    
+        <div class="buttons">
+            <button id="undo" title="Undo"><img src="/app/src/Assets/undo-arrow.png" alt="Undo" height="26px" width="26px"></button>
+            <button id="redo" title="Redo"><img src="/app/src/Assets/redo-arrow.png" alt="Redo" height="26px" width="26px"></button>
+            <button id="clear" title="Clear"><img src="/app/src/Assets/clear.png" alt="Clear" height="26px" width="26px"></button>
+            <button id="toggleAutoSmooth" title="Smooth"><img src="/app/src/Assets/smoother.png" alt="Smoother" height="26px" width="26px"></button>
+            <button id="sendDraw" title="sendDraw"><img src="/app/src/Assets/send.png" alt="sendDraw" height="26px" width="26px"></button>
+        </div>
+    </div>
+    <script src="draw.js"></script>
+
     <button id="backButton" onclick="window.location.href='/app/src/profil.html'"><img src="/app/src/Assets/profil.png" alt="profil" height="26px" width="26px"></button>
 
     <script src="chat.js"></script>

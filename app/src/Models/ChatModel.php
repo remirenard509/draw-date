@@ -28,10 +28,19 @@ class ChatModel extends SqlConnect {
 
   public function getChatFromId($id) {
     try {
-    $query = "SELECT users.username, messages.content
-    FROM $this->table
-    JOIN users ON messages.sender_id = users.id
-    WHERE messages.receiver_id = :id;";
+    $query = "SELECT 
+    users.username, 
+    messages.content,
+    messages.sender_id,
+    messages.receiver_id
+FROM 
+    messages
+JOIN 
+    users ON messages.sender_id = users.id
+WHERE 
+    messages.receiver_id = :id OR messages.sender_id = :id
+ORDER BY 
+    messages.id ASC;";
     $stmt = $this->db->prepare($query);
     $stmt->execute([
         'id' => $id

@@ -37,11 +37,18 @@ class DrawingApp {
             this.autoSmooth = !this.autoSmooth;
             this.smoothButtonStatus();
         });
-        document.getElementById('save').addEventListener('click', () => {this.saveDrawingToDatabase(this.generateSvgCentered(this.history))});
-        document.getElementById('save_description').addEventListener('click', () => {this.saveDescriptionToDatabase();});
+        if (document.getElementById('save')){
+            document.getElementById('save').addEventListener('click', () => {this.saveDrawingToDatabase(this.generateSvgCentered(this.history))});
+            document.getElementById('save_description').addEventListener('click', () => {this.saveDescriptionToDatabase();});
+        }
+        if(document.getElementById('sendDraw')){
+            document.getElementById('sendDraw').addEventListener('click', () => {this.saveDrawingToLocal(this.generateSvgCentered(this.history))});
+        }
     }
-
     
+    saveDrawingToLocal(draw) {
+        localStorage.setItem('draw', draw);
+    }
 
     adjustCanvasResolution() {
         const rect = this.canvas.getBoundingClientRect();
