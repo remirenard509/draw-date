@@ -34,4 +34,10 @@ label, textarea {
 }
 canvas {
     border: 1px solid #314a4b;
+    height: auto;
+}
+.messageAndDraw {
+    visibility: hidden;
+    margin-top: 40px;
+    display:grid;
 }

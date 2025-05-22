@@ -152,6 +152,7 @@ class ChatApp {
             this.contentDiv.appendChild(p);
             this.setMessageAsRead(msg.sender_id);
         });
+        document.querySelector(".messageAndDraw").style.visibility = "visible";
         
     }
 

@@ -9,7 +9,7 @@ class DrawingApp {
         this.lastY = 0;
         this.history = [];
         this.redoHistory = [];
-        this.autoSmooth = false;
+        this.autoSmooth = true;
         this.lineWidth = 2;
         this.svgContent = '';
 
@@ -33,10 +33,7 @@ class DrawingApp {
         document.getElementById('undo').addEventListener('click', () => this.undo());
         document.getElementById('redo').addEventListener('click', () => this.redo());
         document.getElementById('clear').addEventListener('click', () => this.clear());
-        document.getElementById('toggleAutoSmooth').addEventListener('click', () => {
-            this.autoSmooth = !this.autoSmooth;
-            this.smoothButtonStatus();
-        });
+       
         if (document.getElementById('save')){
             document.getElementById('save').addEventListener('click', () => {this.saveDrawingToDatabase(this.generateSvgCentered(this.history))});
             document.getElementById('save_description').addEventListener('click', () => {this.saveDescriptionToDatabase();});
@@ -89,14 +86,6 @@ class DrawingApp {
         this.drawHandle({ offsetX, offsetY });
     }
 
-    smoothButtonStatus() {
-        const elSmoothButton = document.querySelector('#toggleAutoSmooth');
-        if (this.autoSmooth) {
-            elSmoothButton.classList.add('smooth-on');
-        } else {
-            elSmoothButton.classList.remove('smooth-on');
-        }
-    }
     drawMouse(e) {
         if (!this.drawing) return;
     
