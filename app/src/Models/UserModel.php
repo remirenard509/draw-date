@@ -17,7 +17,8 @@ class UserModel extends SqlConnect {
 
   public function delete(int $id) {
       try {
-          $req = $this->db->prepare("DELETE FROM $this->table WHERE id = :id");
+          $req = $this->db->prepare("
+          DELETE FROM $this->table WHERE id = :id");
           $req->execute(["id" => $id]);
           return $req->rowCount() > 0;
       } catch (\PDOException $e) {

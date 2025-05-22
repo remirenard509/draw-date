@@ -150,7 +150,29 @@ class ChatApp {
             p.textContent = `${msg.username}: ${msg.content}`;
             }
             this.contentDiv.appendChild(p);
+            this.setMessageAsRead(msg.sender_id);
         });
+        
+    }
+
+    async setMessageAsRead(senderId) {
+        try {
+            const response = await fetch(`/app/messages/read/${this.id}`, {
+                method: 'PATCH'  ,
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sender_id: senderId})
+            });
+
+            if (response.ok) {
+            } else {
+                console.error('Erreur messsage not set as read');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        }
     }
 }
 

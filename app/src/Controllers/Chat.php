@@ -48,4 +48,17 @@ class Chat extends Controller {
     return $this->chat->getMatch($id);
   }
 
+  #[Route("GET", "/messages/latest/:id", middlewares: [AuthMiddleware::class])]
+  public function getLatestMessage() {
+    $id = intval($this->params['id']);
+    return $this->chat->getLastestMessage($id);
+  }
+
+  #[Route("PATCH", "/messages/read/:id", middlewares: [AuthMiddleware::class])]
+  public function setMessageAsRead() {
+    $id = intval($this->params['id']);
+    $data = $this->body;
+    $senderId = $data['sender_id'];
+    return $this->chat->setMessageAsRead($id, $senderId);
+  }
 }

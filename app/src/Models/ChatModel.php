@@ -25,6 +25,23 @@ class ChatModel extends SqlConnect {
         throw new \Exception("Failed to send message.");
     }
   }
+  public function getLastestMessage($id) {
+    try {
+        $query = "SELECT m.*, u.username 
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE m.receiver_id = :id AND m.readByReceiver = 0
+        LIMIT 1;
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+         'id' => $id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch  (\PDOException $e) {
+        error_log('Erreur SQL : ' . $e->getMessage());
+        throw new \Exception("Failed to check messages");
+    }
+  }
 
   public function getChatFromId($id) {
     try {
@@ -40,12 +57,13 @@ JOIN
 WHERE 
     messages.receiver_id = :id OR messages.sender_id = :id
 ORDER BY 
-    messages.id ASC;";
+     messages.id DESC
+ LIMIT 10;";
     $stmt = $this->db->prepare($query);
     $stmt->execute([
         'id' => $id
     ]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+     return array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
     } catch  (\PDOException $e) {
         error_log('Erreur SQL : ' . $e->getMessage());
         throw new \Exception("Failed to get message.");
@@ -85,6 +103,21 @@ ORDER BY
           error_log('Erreur SQL : ' . $e->getMessage());
           throw new \Exception("Failed to get message.");
       }
+    }
+
+    public function setMessageAsRead($id, $sender_id) {
+        try {
+           $query = "UPDATE $this->table SET readByReceiver = :readByReceiver WHERE receiver_id = :id and sender_id = :sender_id";
+           $stmt = $this->db->prepare($query);
+           return $stmt->execute([
+             'readByReceiver' => '1',
+             'id' => $id,
+             'sender_id' => $sender_id
+           ]);
+        } catch  (\PDOException $e) {
+          error_log('Erreur SQL : ' . $e->getMessage());
+          throw new \Exception("Failed to set messages as read.");
+        } 
     }
   
 }
