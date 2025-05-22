@@ -124,10 +124,10 @@ class ChatApp {
 
     populateUserSelect(users) {
         this.userSelect.innerHTML = '<option value="">--Sélectionner un utilisateur--</option>';
-
-        const uniqueUsers = users.filter(
-            (user, index, self) =>
-                index === self.findIndex(u => u.id === user.id)
+        const uniqueUsers = users
+        .filter(user => user.id != this.id)
+        .filter((user, index, self) =>
+            index === self.findIndex(u => u.id === user.id)
         );
         
         uniqueUsers.forEach(user => {
