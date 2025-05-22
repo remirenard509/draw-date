@@ -124,6 +124,31 @@ class UserModel extends SqlConnect {
       }
   }
 
+    public function getNumberOfSuperMatch($id) {
+        try {
+        $query = "
+            SELECT superMatch
+            FROM users
+            WHERE id = :id
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute(['id' => $id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+         // Debug : temporairement afficher ce qui est retourné
+        error_log("Résultat brut : " . print_r($result, true)); 
+        error_log("ID reçu pour superMatch : " . $id);
+
+        if ($result && isset($result['superMatch'])) {
+            return $result['superMatch'];
+        } else {
+            return 0;
+        }
+        } catch (\PDOException $e) {
+            error_log('Erreur SQL : ' . $e->getMessage());
+            throw new \Exception("Failed to get number.");
+        }
+    }
+
   public function getDraws($id) {
       try {
         $query = "
@@ -171,7 +196,20 @@ class UserModel extends SqlConnect {
           throw new \Exception("Failed to retrieve usernames.");
       }
   }
-
   
+  public function setSuperMatch($id, $data) {
+    try {
+          $query = "UPDATE $this->table SET superMatch = :value WHERE id = :id";
+          $stmt = $this->db->prepare($query);
+          $stmt->execute([
+            'value' => $data['superMatch'],
+            'id' => $id
+          ]);
+          return true;
+      } catch (\PDOException $e) {
+          error_log('Erreur SQL : ' . $e->getMessage());
+          throw new \Exception("Failed to retrieve usernames.");
+      }
+  }
 
 }

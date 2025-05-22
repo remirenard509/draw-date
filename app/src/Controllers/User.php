@@ -164,4 +164,25 @@ class User extends Controller {
           throw new HttpException("Failed to retrieve username.", 500);
       }
   }
+  
+  #[Route("GET", "/superMatch/:id", middlewares: [AuthMiddleware::class])]
+  public function getNumberOfSuperMatch() {
+      try {
+        $id = intval($this->params['id']);
+        return $this->user->getNumberOfSuperMatch($id);
+        } catch (\Exception $e) {
+          throw new HttpException("Failed to retrieve number of supermatch.", 500);
+        }
+    }
+
+   #[Route("PATCH", "/superMatch/:id", middlewares: [AuthMiddleware::class])]
+   public function setSuperMatch() {
+      try {
+          $id = intval($this->params['id']);
+          $data = $this->body;
+          return $this->user->setSuperMatch($id, $data);
+      } catch (\Exception $e) {
+          throw new HttpException("Failed to set number of supermatch.", 500);
+        }
+    }
 }

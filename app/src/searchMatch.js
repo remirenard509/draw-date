@@ -5,6 +5,7 @@ class DrawApp {
         this.randomDrawing = null;
         this.id = localStorage.getItem('id');
         this.token = localStorage.getItem('token');
+        this.numberOfSuperMatch = 0;
         this.init();
     }
 
@@ -16,6 +17,7 @@ class DrawApp {
         }
         this.shuffleArray(this.data);
         this.displayDrawing(this.data[this.index]);
+        this.getNumberOfSuperMatch();
     }
 
     async fetchUserDrawings() {
@@ -98,6 +100,47 @@ class DrawApp {
         }
     }
 
+    async superMatch() {
+         const response = await fetch(`/app/superMatch/${this.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'superMatch': this.numberOfSuperMatch - 1 })
+            });
+            if (response.ok) {
+                this.match();
+                alert('vous avez matché !');
+                window.location.reload();
+            }
+    }
+
+    async getNumberOfSuperMatch() {
+        try{
+             const response = await fetch(`/app/superMatch/${this.id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                this.numberOfSuperMatch = data;
+                let superMatchElement = document.querySelector('.superMatch');
+                if (this.numberOfSuperMatch != 0) {
+                    superMatchElement.textContent = this.numberOfSuperMatch;
+                    superMatchElement.style.visibility = "visible";  
+                }
+            } else {
+                console.error('Erreur get number of supermatch');
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        }
+    }
+
     async match() {
         try {
             const response = await fetch(`/app/match`, {
@@ -175,3 +218,4 @@ document.getElementById('nextButton').onclick = () => app.nextDrawing();
 document.getElementById('previousButton').onclick = () => app.previousDrawing();
 document.getElementById('compareButton').onclick = () => app.compareDescriptions();
 document.getElementById('logoutButton').onclick = () => app.logout();
+document.getElementById('superMatchButton').onclick = () => app.superMatch();
