@@ -125,10 +125,11 @@ class User extends Controller {
       }
   }
 
-  #[Route("GET", "/draws", middlewares: [AuthMiddleware::class])]
+  #[Route("GET", "/draws/:id", middlewares: [AuthMiddleware::class])]
   public function getDraws() {
       try {
-          return $this->user->getDraws();
+        $id = intval($this->params['id']);
+        return $this->user->getDraws($id);
       } catch (\Exception $e) {
           error_log('Erreur : ' . $e->getMessage());
           throw new HttpException("Failed to retrieve drawings.", 500);

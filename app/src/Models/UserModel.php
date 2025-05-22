@@ -124,12 +124,22 @@ class UserModel extends SqlConnect {
       }
   }
 
-  public function getDraws() {
+  public function getDraws($id) {
       try {
-          $query = "SELECT id, draw_svg, draw_description FROM $this->table WHERE draw_svg IS NOT NULL";
-          $stmt = $this->db->prepare($query);
-          $stmt->execute();
-          return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $query = "
+            SELECT id, draw_svg, draw_description
+            FROM users
+            WHERE draw_svg IS NOT NULL
+            AND id != :id
+            AND id NOT IN (
+                SELECT user2_id FROM `match` WHERE user1_id = :id
+                UNION
+                SELECT user1_id FROM `match` WHERE user2_id = :id
+            )
+        ";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
       } catch (\PDOException $e) {
           error_log('Erreur SQL : ' . $e->getMessage());
           throw new \Exception("Failed to retrieve drawings.");

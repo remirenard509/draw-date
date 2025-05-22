@@ -3,9 +3,9 @@ class DrawApp {
         this.data = [];
         this.index = 0;
         this.randomDrawing = null;
-        this.init();
         this.id = localStorage.getItem('id');
         this.token = localStorage.getItem('token');
+        this.init();
     }
 
     async init() {
@@ -20,10 +20,10 @@ class DrawApp {
 
     async fetchUserDrawings() {
         try {
-            const response = await fetch('/app/draws/', {
+            const response = await fetch(`/app/draws/${this.id}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${this.token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -49,12 +49,17 @@ class DrawApp {
     }
 
     displayDrawing(draw) {
+        try {
         const drawsContainer = document.getElementById('draws-container');
         drawsContainer.innerHTML = '';
         const svgElement = document.createElement('div');
         svgElement.innerHTML = draw.draw_svg;
         drawsContainer.appendChild(svgElement);
         this.randomDrawing = draw;
+        }  catch (error) {
+            alert("Aucun nouveau dessin à afficher", error);
+             window.location.href = 'profil.html';
+        }
     }
 
     nextDrawing() {
@@ -163,10 +168,8 @@ class DrawApp {
     }
 }
 
-// Instanciation de l'application
 const app = new DrawApp();
 
-// Liaison des boutons aux méthodes de la classe
 document.getElementById('hintButton').onclick = () => app.displayHint();
 document.getElementById('nextButton').onclick = () => app.nextDrawing();
 document.getElementById('previousButton').onclick = () => app.previousDrawing();

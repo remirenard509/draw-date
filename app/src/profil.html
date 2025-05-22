@@ -9,7 +9,6 @@
 </head>
 <body>
     <script>
-        // Fonction pour récupérer et afficher les données utilisateur
         async function fetchUserProfile() {
             const id = localStorage.getItem('id');
 
@@ -34,7 +33,7 @@
                             </svg>
                         </div>
                         <p>draw_description: ${data.draw_description}</p>
-                        <button onclick="window.location.href='/app/src/home.html'"><img src="/app/src/Assets/home.png" alt="home" height="26px" width="26px"></button>
+                        <button onclick="window.location.href='/app/src/searchMatch.html'"><img src="/app/src/Assets/home.png" alt="home" height="26px" width="26px"></button>
                         <button onclick="window.location.href='/app/src/chat.html'"><img src="/app/src/Assets/chat.png" alt="chat" height="26px" width="26px"></button>
                         <button onclick="window.location.href='/app/src/draw.html'"><img src="/app/src/Assets/drawing.png" alt="draw" height="26px" width="26px"></button>
                         <button onclick="window.location.href='/app/src/edit.html'"><img src="/app/src/Assets/edit-profil.png" alt="edit-profil" height="26px" width="26px"></button>
@@ -56,13 +55,12 @@
                 console.error('Erreur de réseau:', error);
             }
         }
-        //deconnexion supprime le local storage
         function logout() {
             localStorage.removeItem('id');
             localStorage.removeItem('token');
             window.location.href = '/app/src/login.html';
         }
-        // Appel de la fonction pour récupérer les données utilisateur
+
         fetchUserProfile();
     </script>
 </body>
