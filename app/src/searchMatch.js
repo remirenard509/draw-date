@@ -27,15 +27,26 @@ class DrawApp {
             return actions.order.create({
                 purchase_units: [{
                 amount: {
-                    value: '9.99'
-                }
+                    value: '9.99',
+                   
+                },
+                 description: 'Achat de 1 SuperMatch - Application Draw Date'
                 }]
-            });
+            }); 
             },
             onApprove: async (data, actions) => {
-            const details = await actions.order.capture();
-            alert(`Paiement réussi, merci ${details.payer.name.given_name} !`);
-            this.addSuperMatch();
+                 try {
+                const details = await actions.order.capture();
+                alert(`Paiement réussi, merci ${details.payer.name.given_name} !`);
+                await this.addSuperMatch();
+            } catch (error) {
+                console.error('Erreur pendant la validation du paiement ou l’ajout du superMatch :', error);
+                alert("Une erreur est survenue après le paiement. Merci de contacter le support.");
+            }
+            },
+            onError: (err) => {
+                console.error("Erreur PayPal :", err);
+                alert("Le paiement a échoué. Merci de réessayer ou d’utiliser un autre moyen.");
             }
         }).render('#paypal-button-container');
     }
