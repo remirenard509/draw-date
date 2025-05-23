@@ -18,6 +18,26 @@ class DrawApp {
         this.shuffleArray(this.data);
         this.displayDrawing(this.data[this.index]);
         this.getNumberOfSuperMatch();
+        this.paypal();
+    }
+
+    paypal () {
+                paypal.Buttons({
+            createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{
+                amount: {
+                    value: '9.99'
+                }
+                }]
+            });
+            },
+            onApprove: async (data, actions) => {
+            const details = await actions.order.capture();
+            alert(`Paiement réussi, merci ${details.payer.name.given_name} !`);
+            this.addSuperMatch();
+            }
+        }).render('#paypal-button-container');
     }
 
     async fetchUserDrawings() {
@@ -92,8 +112,7 @@ class DrawApp {
         if (trimmedTry === trimmedServer) {
             this.match();
             alert('vous avez matché !');
-
-
+             window.location.reload();
         } else {
             
            this.displayHintTry();
@@ -114,6 +133,22 @@ class DrawApp {
                 alert('vous avez matché !');
                 window.location.reload();
             }
+    }
+
+    async addSuperMatch() {
+        this.numberOfSuperMatch += 20;
+        const response = await fetch(`/app/superMatch/${this.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 'superMatch': this.numberOfSuperMatch })
+        });
+        if (response.ok) {
+            alert('vous avez 20 supermatch en plus!');
+            window.location.reload();
+        }
     }
 
     async getNumberOfSuperMatch() {

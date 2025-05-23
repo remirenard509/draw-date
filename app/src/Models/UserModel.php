@@ -211,5 +211,4 @@ class UserModel extends SqlConnect {
           throw new \Exception("Failed to retrieve usernames.");
       }
   }
-
 }

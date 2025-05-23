@@ -29,9 +29,20 @@
             <div>           
                 <button id="profilButton"  class="icon" onclick="window.location.href='/app/src/profil.html'"><img src="/app/src/Assets/profil.png" alt="profil" height="26px" width="26px"></button>
                 <button id="logoutButton" class="icon"><img src="/app/src/Assets/logout.png" alt="logout" height="26px" width="26px"></button>
-            </div>
+            </div> 
+                <div id="paypal-button-container"></div>
+                <p id="result-message"></p>
         </div>
     </div>
+
+  
+
+    <script
+        src="https://www.paypal.com/sdk/js?client-id=AfHNndLe4NbxBw5DoM5kYw8w5KpemFVv1OWYcQ3jj6Un6bvXZJiMR8--eqmoQee4KtxkzGtAHtD9Bi8y&buyer-country=FR&currency=EUR&components=buttons&disable-funding=venmo,paylater,card"
+        data-sdk-integration-source="developer-studio"
+    ></script>
+    
+
     <script src="searchMatch.js"></script>
 </body>
 </html>

@@ -185,4 +185,5 @@ class User extends Controller {
           throw new HttpException("Failed to set number of supermatch.", 500);
         }
     }
+
 }
