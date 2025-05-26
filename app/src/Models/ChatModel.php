@@ -43,27 +43,32 @@ class ChatModel extends SqlConnect {
     }
   }
 
-  public function getChatFromId($id) {
+ public function getChat($senderId, $receiverId) {
     try {
-    $query = "SELECT 
-    users.username, 
-    messages.content,
-    messages.sender_id,
-    messages.receiver_id
-FROM 
-    messages
-JOIN 
-    users ON messages.sender_id = users.id
-WHERE 
-    messages.receiver_id = :id OR messages.sender_id = :id
-ORDER BY 
-     messages.id DESC
- LIMIT 10;";
-    $stmt = $this->db->prepare($query);
-    $stmt->execute([
-        'id' => $id
-    ]);
-     return array_reverse($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $query = "SELECT 
+            users.username, 
+            messages.content,
+            messages.sender_id,
+            messages.receiver_id
+        FROM 
+            messages
+        JOIN 
+            users ON messages.sender_id = users.id
+        WHERE 
+            (messages.sender_id = :senderId AND messages.receiver_id = :receiverId)
+            OR
+            (messages.sender_id = :receiverId AND messages.receiver_id = :senderId)
+        ORDER BY 
+            messages.id DESC
+        LIMIT 20;";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            'senderId' => $senderId,
+            'receiverId' => $receiverId
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch  (\PDOException $e) {
         error_log('Erreur SQL : ' . $e->getMessage());
         throw new \Exception("Failed to get message.");

@@ -19,10 +19,12 @@ class Chat extends Controller {
       parent::__construct($param);
   }
 
-  #[Route("GET", "/chat/:id", middlewares: [AuthMiddleware::class])]
+  #[Route("POST", "/chat", middlewares: [AuthMiddleware::class])]
   public function getChat() {
-    $id = intval($this->params['id']);
-    return $this->chat->getChatFromId($id);
+    $data = $this->body;
+    $senderId = $data['sender_id'];
+    $receiverId = $data['receiver_id'];
+    return $this->chat->getChat($senderId, $receiverId);
   }
 
   #[Route("POST", "/send", middlewares: [AuthMiddleware::class])]

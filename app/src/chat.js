@@ -20,7 +20,7 @@ class ChatApp {
         this.userSelect.addEventListener('change', () => {
             this.selectedUserId = this.userSelect.value;
             if (this.selectedUserId) {
-               this.getMessages(this.selectedUserId);
+               this.getMessages(this.id, this.selectedUserId);
             }
         });
 
@@ -81,17 +81,19 @@ class ChatApp {
         }
     }
 
-    async getMessages(userId) {
+    async getMessages(receiverId, senderId) {
         try {
-            const response = await fetch(`/app/chat/${userId}`, {
-                method: 'GET',
+            const response = await fetch(`/app/chat`, {
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${this.token}`,
                     'Content-Type': 'application/json'
-                }
+                },
+                body : JSON.stringify({sender_id: senderId, receiver_id: receiverId})
             });
             if (response.ok) {
                 const messages = await response.json();
+                console.log(messages);
                 this.displayMessages(messages);
             } else {
                 console.error('Erreur lors de la récupération des messages');
