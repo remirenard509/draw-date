@@ -66,13 +66,17 @@
 
 
         document.querySelector('#sendMail').addEventListener('click',async () => {
+            const email = document.getElementById('email').value;
+            localStorage.setItem('email', email);
             const data = {
-                'Email':"rem.renard36@gmail.com",
-                'Name':"rémi",
-                'Subject' :"test",
-                'Content':"content test"
+                'Email':email,
+                'Name':"",
+                'Subject' :"récupération de compte",
+                'Content':"pour récupérer votre compte entrez ce lien dans votre navigateur http://localhost/app/src/resetPassword.html"
             }
+            
             try {
+                if(email){
                 const response = await fetch('/app/sendmail', {
                     method: 'POST',
                     headers: {
@@ -80,9 +84,8 @@
                     },
                     body: JSON.stringify(data) 
                 });
-
+                }  else alert('entrer un email valide');
                 if (response.ok) {
-                    console.log("ok send")
                 } 
             }catch (err) {
                 console.error('Erreur lors de la requête :', err);

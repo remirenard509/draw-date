@@ -186,4 +186,42 @@ class User extends Controller {
         }
     }
 
+    #[Route("POST", "/email")]
+    public function getIdFromEmail() {
+        $data = $this->body;
+        return $this->user->getIdFromEmail($data);
+    }
+
+     #[Route("PATCH", "/userReset/:id")]
+     public function resetPassword() {
+      try {
+          $id = intval($this->params['id']);
+          $data = $this->body;
+
+          if (empty($data)) {
+              throw new HttpException("No data provided for the update.", 400);
+          }
+
+          $validFields = ['username', 'bio', 'avatar', 'password'];
+          $filteredData = array_filter(
+              $data,
+              fn($key) => in_array($key, $validFields),
+              ARRAY_FILTER_USE_KEY
+          );
+
+          if (empty($filteredData)) {
+              throw new HttpException("No valid fields provided for the update.", 400);
+          }
+
+          $result = $this->user->update($filteredData, $id);
+          if (!$result) {
+              throw new HttpException("Failed to update user.", 500);
+          }
+
+          return ['message' => 'User updated successfully'];
+      } catch (\Exception $e) {
+          error_log('Erreur : ' . $e->getMessage());
+          throw new HttpException("An unexpected error occurred.", 500);
+      }
+  }
 }

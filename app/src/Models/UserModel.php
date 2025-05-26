@@ -211,4 +211,13 @@ class UserModel extends SqlConnect {
           throw new \Exception("Failed to retrieve usernames.");
       }
   }
+
+  public function getIdFromEmail($data) {
+    $query = "SELECT id FROM $this->table WHERE email = :email";
+          $stmt = $this->db->prepare($query);
+          $stmt->execute([
+            'email' => $data['email']
+          ]);
+          return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
 }
