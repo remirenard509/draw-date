@@ -11,6 +11,7 @@ class ChatApp {
         this.sendButton = document.getElementById('sendButton');
         this.contentDiv = document.getElementById('content');
         this.sendDraw = document.getElementById('sendDraw');
+        this.userProfil = document.getElementById('userprofil');
 
         this.addEventListeners();
         this.getMatch();
@@ -21,6 +22,7 @@ class ChatApp {
             this.selectedUserId = this.userSelect.value;
             if (this.selectedUserId) {
                this.getMessages(this.id, this.selectedUserId);
+               this.fetchProfil();
             }
         });
 
@@ -37,6 +39,32 @@ class ChatApp {
             this.sendMessage(this.id,this.selectedUserId, this.draw);
             }
         });
+    }
+
+    async fetchProfil() {
+        try {
+            const response = await fetch(`/app/displayprofil/${this.selectedUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.displayProfil(data[0]);
+            }
+        } catch (error) {
+            console.error('Erreur réseau :', error);
+        }
+    }
+
+    displayProfil(data) {
+        document.querySelector('#displayProfil').innerHTML = `
+        ${data.username} ${data.bio}
+        <img src="${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100">
+    `;
     }
 
     async sendMessage(senderId, receiverId, message) {
@@ -93,7 +121,6 @@ class ChatApp {
             });
             if (response.ok) {
                 const messages = await response.json();
-                console.log(messages);
                 this.displayMessages(messages);
             } else {
                 console.error('Erreur lors de la récupération des messages');

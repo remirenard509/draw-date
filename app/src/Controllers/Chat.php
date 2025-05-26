@@ -63,4 +63,10 @@ class Chat extends Controller {
     $senderId = $data['sender_id'];
     return $this->chat->setMessageAsRead($id, $senderId);
   }
+
+  #[Route("GET", "/displayprofil/:id", middlewares: [AuthMiddleware::class])]
+  public function fetchprofil() {
+    $id = intval($this->params['id']);
+    return $this->chat->fetchprofil($id);
+  }
 }

@@ -125,4 +125,13 @@ class ChatModel extends SqlConnect {
         } 
     }
   
+
+    public function fetchprofil($id) {
+        $query = "SELECT username, bio, avatar FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([
+            'id' => $id
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
