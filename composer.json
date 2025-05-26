@@ -5,7 +5,8 @@
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.0",
-        "vlucas/phpdotenv": "^5.5"
+        "mailjet/mailjet-apiv3-php": "^1.6",
+        "vlucas/phpdotenv": "^5.6"
     },
     "autoload": {
         "psr-4": {
