@@ -7,40 +7,36 @@ use App\Models\AuthModel;
 use App\Utils\{Route, HttpException};
 
 class Auth extends Controller {
-  protected object $auth;
+    protected AuthModel $auth;
 
-  public function __construct($params) {
-    $this->auth = new AuthModel();
-    parent::__construct($params);
-  }
+    public function __construct(array $params) {
+        parent::__construct($params);
+        $this->auth = new AuthModel();
+    }
 
+    #[Route("POST", "/register")]
+    public function register(): array {
+        try {
+            $data = $this->body;
+            if (empty($data['email']) || empty($data['password'])) {
+                throw new HttpException("Missing email or password.", 400);
+            }
+            return $this->auth->register($data);
+        } catch (\Exception $e) {
+            throw new HttpException($e->getMessage(), 400);
+        }
+    }
 
-  #[Route("POST", "/register")]
-  public function register() {
-      try {
-          $data = $this->body;
-          if (empty($data['email']) || empty($data['password'])) {
-              throw new HttpException("Missing data", 400);
-          }
-          $user = $this->auth->register($data);
-          return $user;
-      } catch (\Exception $e) {
-          throw new HttpException($e->getMessage(), 400);
-      }
-  }
-
-  #[Route("POST", "/login")]
-  public function login() {
-      try {
-          $data = $this->body;
-          if (empty($data['email']) || empty($data['password'])) {
-              throw new HttpException("Missing email or password.", 400);
-          }
-          $token = $this->auth->login($data['email'], $data['password']);
-          return $token;
-      } catch (\Exception $e) {
-          throw new HttpException($e->getMessage(), 401);
-      }
-  }
-  
+    #[Route("POST", "/login")]
+    public function login(): array {
+        try {
+            $data = $this->body;
+            if (empty($data['email']) || empty($data['password'])) {
+                throw new HttpException("Missing email or password.", 400);
+            }
+            return $this->auth->login($data['email'], $data['password']);
+        } catch (\Exception $e) {
+            throw new HttpException($e->getMessage(), 401);
+        }
+    }
 }

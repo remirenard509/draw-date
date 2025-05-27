@@ -79,7 +79,7 @@ class ChatApp {
             });
 
             if (response.ok) {
-                this.getMessages(receiverId);
+                this.getMessages(receiverId, senderId);
             } else {
                 console.error('Erreur lors de l\'envoi');
             }

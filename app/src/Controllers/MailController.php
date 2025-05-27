@@ -42,7 +42,6 @@ class MailController extends Controller {
 
 public function send($to_email, $to_name, $subject, $content)
 {
-    // Initialisation du client Mailjet
     $mj = new Client(
         $_ENV['MJ_APIKEY_PUBLIC'] ?? null,
         $_ENV['MJ_APIKEY_PRIVATE'] ?? null,
@@ -68,18 +67,16 @@ public function send($to_email, $to_name, $subject, $content)
                     ]
                 ],
                 'Subject' => $subject,
-                'TextPart' => strip_tags($content), // optionnel, version texte
+                'TextPart' => strip_tags($content),
             ]
         ]
     ];
 
-    // 🧩 Log de debug
     error_log("📧 Tentative d'envoi via Mailjet à $to_email ($to_name)");
 
     try {
         $response = $mj->post(Resources::$Email, ['body' => $body]);
 
-        // 🧩 Log de la réponse si nécessaire
         error_log("✅ Mailjet réponse : " . $response->getStatus() . " - " . json_encode($response->getData()));
     } catch (\Exception $e) {
         error_log("❌ Erreur d'envoi Mailjet : " . $e->getMessage());

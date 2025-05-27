@@ -17,77 +17,97 @@
     <button id="logout">Déconnexion</button>
 
     <script>
-        document.getElementById('logout').addEventListener('click', () => {
-            localStorage.removeItem('token');
-            window.location.href = '/app/src/login.html';
-        });
-        async function fetchUsers() {
-            try {
-                const response = await fetch('/app/users', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                if (response.ok) {
-                    const users = await response.json();
-                    const userList = document.getElementById('user-list');
-                    userList.innerHTML = '';
-                    users.forEach(user => {
-                        const li = document.createElement('li');
-                        li.textContent = `${user.username} ${user.email}`;
-                        li.innerHTML += `
-                        <button class="activated" data-id="${user.id}">${user.activated ? 'Désactiver' : 'Activer'}</button>
-                        <button class="delete" data-id="${user.id}">Supprimer</button>`;
-                        userList.appendChild(li);
-                    });
-                } else {
-                    console.error('Erreur lors de la récupération des utilisateurs.');
-                }
-            } catch (error) {
-                console.error('Erreur de réseau:', error);
+   document.getElementById('logout').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.href = '/app/src/login.html';
+});
+
+async function fetchUsers() {
+    try {
+        const response = await fetch('/app/users', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
+        });
+        if (response.ok) {
+            const users = await response.json();
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `${user.username} ${user.email}`;
+                li.innerHTML += `
+                    <button class="activated" data-id="${user.id}" data-activated="${user.activated ? 1 : 0}">
+                        ${user.activated == 1 ? 'Désactiver' : 'Activer'}
+                    </button>
+                    <button class="delete" data-id="${user.id}">Supprimer</button>
+                `;
+                userList.appendChild(li);
+            });
+        } else {
+            console.error('Erreur lors de la récupération des utilisateurs.');
         }
+    } catch (error) {
+        console.error('Erreur de réseau:', error);
+    }
+}
 
-        fetchUsers();
-        document.getElementById('user-list').addEventListener('click', async (event) => {
-            if (event.target.classList.contains('activated')) {
-                const userId = event.target.dataset.id;
-                const isActivated = event.target.textContent === 'Désactiver';
+async function init() {
+    await fetchUsers();
 
-                try {
+    document.getElementById('user-list').addEventListener('click', async (event) => {
+        const target = event.target;
+
+        if (target.classList.contains('activated')) {
+            const userId = target.dataset.id;
+            const currentStatus = parseInt(target.dataset.activated, 10);
+            const newStatus = currentStatus === 1 ? 0 : 1;
+
+            try {
                 const response = await fetch(`/app/user/${userId}/activated`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ activated: !isActivated })
+                    body: JSON.stringify({ activated: newStatus })
                 });
+
                 if (response.ok) {
-                    event.target.textContent = isActivated ? 'Activer' : 'Désactiver';
-                    event.target.dataset.activated = (!isActivated).toString();
+                    await fetchUsers();
                 } else {
-                    console.error('Erreur lors de la mise à jour de l\'activation de l\'utilisateur.');
+                    console.error("Erreur serveur lors de l'activation.");
                 }
-                } catch (error) {
-                    console.error('Erreur de réseau:', error);
-                }
-            } else if (event.target.classList.contains('delete')) {
-                const userId = event.target.dataset.id;
+            } catch (error) {
+                console.error("Erreur réseau :", error);
+            }
+        } else if (target.classList.contains('delete')) {
+            const userId = target.dataset.id;
+
+            try {
                 const response = await fetch(`/app/user/${userId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
+
                 if (response.ok) {
-                    fetchUsers();
+                    await fetchUsers();
                 } else {
-                    console.error('Erreur lors de la suppression de l\'utilisateur.');
+                    console.error("Erreur serveur lors de la suppression.");
                 }
+            } catch (error) {
+                console.error("Erreur réseau :", error);
             }
-        });
-    </script>
+        }
+    });
+}
+
+// Lancer l'initialisation
+init();
+
+</script>
 </body>
 </html>

@@ -12,61 +12,55 @@ use App\Middlewares\AuthMiddleware;
 
 class Chat extends Controller {
 
-  public function __construct($param) {
-      $this->user = new UserModel();
-      $this->auth = new AuthModel();
-      $this->chat = new ChatModel();
-      parent::__construct($param);
-  }
+    private UserModel $user;
+    private AuthModel $auth;
+    private ChatModel $chat;
 
-  #[Route("POST", "/chat", middlewares: [AuthMiddleware::class])]
-  public function getChat() {
-    $data = $this->body;
-    $senderId = $data['sender_id'];
-    $receiverId = $data['receiver_id'];
-    return $this->chat->getChat($senderId, $receiverId);
-  }
+    public function __construct($param) {
+        parent::__construct($param);
+        $this->user = new UserModel();
+        $this->auth = new AuthModel();
+        $this->chat = new ChatModel();
+    }
 
-  #[Route("POST", "/send", middlewares: [AuthMiddleware::class])]
-  public function sendMessage() {
-    $data = $this->body;
-    $senderId = $data['sender_id'];
-    $receiverId = $data['receiver_id'];
-    $content = $data['content'];
-    $this->chat->sendMessage($senderId, $receiverId, $content);
-    return true;
-  }
-  #[Route("POST", "/match", middlewares: [AuthMiddleware::class])]
-  public function match() {
-    $data = $this->body;
-    $user1_id = $data['user1_id'];
-    $user2_id = $data['user2_id'];
-    $this->chat->match($user1_id, $user2_id);
-    return true;
-  }
-  #[Route("GET", "/match/:id", middlewares: [AuthMiddleware::class])]
-  public function getMatch() {
-    $id = intval($this->params['id']);
-    return $this->chat->getMatch($id);
-  }
+    #[Route("POST", "/chat", middlewares: [AuthMiddleware::class])]
+    public function getChat(): array {
+        $data = $this->body;
+        return $this->chat->getChat($data['sender_id'], $data['receiver_id']);
+    }
 
-  #[Route("GET", "/messages/latest/:id", middlewares: [AuthMiddleware::class])]
-  public function getLatestMessage() {
-    $id = intval($this->params['id']);
-    return $this->chat->getLastestMessage($id);
-  }
+    #[Route("POST", "/send", middlewares: [AuthMiddleware::class])]
+    public function sendMessage(): bool {
+        $data = $this->body;
+        $this->chat->sendMessage($data['sender_id'], $data['receiver_id'], $data['content']);
+        return true;
+    }
 
-  #[Route("PATCH", "/messages/read/:id", middlewares: [AuthMiddleware::class])]
-  public function setMessageAsRead() {
-    $id = intval($this->params['id']);
-    $data = $this->body;
-    $senderId = $data['sender_id'];
-    return $this->chat->setMessageAsRead($id, $senderId);
-  }
+    #[Route("POST", "/match", middlewares: [AuthMiddleware::class])]
+    public function match(): bool {
+        $data = $this->body;
+        $this->chat->match($data['user1_id'], $data['user2_id']);
+        return true;
+    }
 
-  #[Route("GET", "/displayprofil/:id", middlewares: [AuthMiddleware::class])]
-  public function fetchprofil() {
-    $id = intval($this->params['id']);
-    return $this->chat->fetchprofil($id);
-  }
+    #[Route("GET", "/match/:id", middlewares: [AuthMiddleware::class])]
+    public function getMatch(): array {
+        return $this->chat->getMatch((int) $this->params['id']);
+    }
+
+    #[Route("GET", "/messages/latest/:id", middlewares: [AuthMiddleware::class])]
+    public function getLatestMessage(): array {
+        return $this->chat->getLastestMessage((int) $this->params['id']);
+    }
+
+    #[Route("PATCH", "/messages/read/:id", middlewares: [AuthMiddleware::class])]
+    public function setMessageAsRead(): bool {
+        $data = $this->body;
+        return $this->chat->setMessageAsRead((int) $this->params['id'], $data['sender_id']);
+    }
+
+    #[Route("GET", "/displayprofil/:id", middlewares: [AuthMiddleware::class])]
+    public function fetchprofil(): array {
+        return $this->chat->fetchprofil((int) $this->params['id']);
+    }
 }
