@@ -18,6 +18,12 @@ body {
     height: 400px;
 }
 
+@media (min-width: 600px) {
+    #canvas {
+        width: 90%;
+    }
+}
+
 h1 {
     font-family: "Belleza", sans-serif;
 }
@@ -101,4 +107,21 @@ text {
     width: 26px;
     visibility: hidden;
     position: absolute;
+}
+.notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 1000;
+    font-size: 14px;
+}
+.messageAndDraw {
+    visibility: hidden;
+    margin-top: 40px;
+    display:grid;
 }

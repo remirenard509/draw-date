@@ -39,7 +39,7 @@ class UserModel extends SqlConnect {
 
     public function getAll(): array {
         try {
-            $query = "SELECT * FROM {$this->table}";
+            $query = "SELECT id, email, username, gender, search_gender, dob, bio, avatar, draw_svg, draw_description, activated, superMatch FROM {$this->table}";
             $req = $this->db->prepare($query);
             $req->execute();
             return $req->fetchAll(PDO::FETCH_ASSOC);

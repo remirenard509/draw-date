@@ -6,7 +6,7 @@ use App\Controllers\Controller;
 use App\Models\AuthModel;
 use App\Utils\{Route, HttpException};
 
-class Auth extends Controller {
+class AuthController extends Controller {
     protected AuthModel $auth;
 
     public function __construct(array $params) {

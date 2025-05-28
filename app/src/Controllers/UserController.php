@@ -10,7 +10,7 @@ use App\Utils\HttpException;
 use App\Middlewares\AuthMiddleware;
 use App\Validators\UserValidator;
 
-class User extends Controller {
+class UserController extends Controller {
     protected object $user;
     protected object $auth;
 

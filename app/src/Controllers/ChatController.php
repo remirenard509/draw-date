@@ -10,7 +10,7 @@ use App\Utils\Route;
 use App\Utils\HttpException;
 use App\Middlewares\AuthMiddleware;
 
-class Chat extends Controller {
+class ChatController extends Controller {
 
     private UserModel $user;
     private AuthModel $auth;

@@ -14,7 +14,6 @@
     <button id="backButton" style="display: none;" onclick="window.location.href='/app/src/profil.html'">Retour au profil</button>
 
     <script>
-        // Fonction pour récupérer et afficher les données utilisateur
         async function fetchUserProfile() {
             const id = localStorage.getItem('id');
             if (!id) {
@@ -88,7 +87,6 @@
             }
         }
 
-        // Appel de la fonction pour récupérer les données utilisateur
         fetchUserProfile();
     </script>
 </body>

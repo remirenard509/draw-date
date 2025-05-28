@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 use App\Router;
-use App\Controllers\{User, Auth, Chat, MailController};
+use App\Controllers\{UserController, AuthController, ChatController, MailController};
  require_once __DIR__ . '/../vendor/autoload.php';
 use Dotenv\Dotenv;
 
@@ -14,9 +14,9 @@ try {
    
 
     $controllers = [
-        User::class,
-        Auth::class,
-        Chat::class,
+        UserController::class,
+        AuthController::class,
+        ChatController::class,
         MailController::class
     ];
 

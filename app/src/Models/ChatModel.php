@@ -69,7 +69,7 @@ class ChatModel extends SqlConnect {
 
     public function match(int $user1_id, int $user2_id): void {
         try {
-            $query = "INSERT INTO {$this->matchTable} (user1_id, user2_id) VALUES (:user1_id, :user2_id)";
+            $query = "INSERT INTO `{$this->matchTable}` (user1_id, user2_id) VALUES (:user1_id, :user2_id)";
             $stmt = $this->db->prepare($query);
             $stmt->execute([
                 'user1_id' => $user1_id,
