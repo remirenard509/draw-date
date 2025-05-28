@@ -173,8 +173,16 @@ class ChatApp {
         messages.forEach(msg => {
             const p = document.createElement('p');
             if (msg.content.includes('svg')){
-                p.innerHTML = msg.content; 
-
+                const wrapper = document.createElement('div');
+                wrapper.style.width = '300px';
+                wrapper.style.height = '300px';
+                wrapper.style.border = '1px solid #ccc';
+                wrapper.style.marginLeft = 'auto';
+                wrapper.style.marginRight = 'auto';
+                wrapper.innerHTML = msg.content;
+                p.innerHTML = '';
+                p.appendChild(wrapper);
+        
             } else {
             p.textContent = `${msg.username}: ${msg.content}`;
             }
