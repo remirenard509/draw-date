@@ -94,6 +94,12 @@ textarea, select {
 input {
     background: #0a9b5725;
 }
+#messageInput {
+    height: 50vh;
+    margin: auto;
+    width: 50vh;
+
+}
 #description-container {
     display: flex;
     flex-direction: column;
