@@ -60,7 +60,8 @@ class ChatModel extends SqlConnect {
                 'receiverId' => $receiverId
             ]);
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return array_reverse($messages);
         } catch (\PDOException $e) {
             error_log('Erreur SQL : ' . $e->getMessage());
             throw new \Exception("Failed to get message.");
