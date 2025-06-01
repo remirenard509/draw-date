@@ -181,4 +181,14 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
+    #[Route("POST", "/save-location/:id")]
+    public function savaLocation() {
+        try {
+            $id = UserValidator::validateId($this->params['id']);
+            return $this->user->saveLocation($id, $this->body);
+        } catch (\Exception $e) {
+            error_log('Erreur : ' . $e->getMessage());
+            throw new HttpException("An unexpected error occurred.", 500);
+        }
+    }
 }

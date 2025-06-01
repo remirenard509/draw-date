@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,39 @@
 </head>
 <body>
     <script>
+    // récupérer la localisation
+    const id = localStorage.getItem('id');
+    if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Envoie vers ton backend
+            fetch(`/app/save-location/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'latitude':latitude, 'longitude':longitude })
+            })
+            .then(response => response.json())
+            .then(data => {
+            })
+            .catch(error => {
+                console.error('Erreur lors de l\'envoi :', error);
+            });
+        },
+        error => {
+            console.error("Erreur de géolocalisation :", error.message);
+        }
+    );
+    } else {
+        console.error("La géolocalisation n'est pas supportée par ce navigateur.");
+    }
+
+
+
         async function fetchUserProfile() {
             const id = localStorage.getItem('id');
 

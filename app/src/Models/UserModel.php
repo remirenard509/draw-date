@@ -189,4 +189,18 @@ class UserModel extends SqlConnect {
             throw new \Exception("Failed to retrieve ID from email.");
         }
     }
+
+    public function saveLocation($id, $data) {
+        try {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET latitude = :latitude, longitude = :longitude WHERE id = :id");
+            return $stmt->execute([
+                'latitude' => $data['latitude'],
+                'longitude' => $data['longitude'],
+                'id' => $id
+            ]);
+        } catch (\PDOException $e) {
+            error_log('Erreur SQL : ' . $e->getMessage());
+            throw new \Exception("Failed to update location.");
+        }
+    }
 }
