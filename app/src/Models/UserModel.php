@@ -7,7 +7,7 @@ use stdClass;
 
 class UserModel extends SqlConnect {
     private string $table = "users";
-    public array $authorized_fields_to_update = ['username', 'bio', 'avatar', 'password', 'activated'];
+    public array $authorized_fields_to_update = ['username', 'bio', 'avatar', 'password', 'activated', 'codePostal'];
     private string $passwordSalt;
 
     public function __construct() {
@@ -39,7 +39,7 @@ class UserModel extends SqlConnect {
 
     public function getAll(): array {
         try {
-            $query = "SELECT id, email, username, gender, search_gender, dob, bio, avatar, draw_svg, draw_description, activated, superMatch FROM {$this->table}";
+            $query = "SELECT * FROM {$this->table}";
             $req = $this->db->prepare($query);
             $req->execute();
             return $req->fetchAll(PDO::FETCH_ASSOC);

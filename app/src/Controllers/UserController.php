@@ -56,7 +56,7 @@ class UserController extends Controller {
     public function updateUser() {
         try {
             $id = UserValidator::validateId($this->params['id']);
-            $filteredData = UserValidator::validateUpdateFields($this->body, ['username', 'bio', 'avatar', 'password']);
+            $filteredData = UserValidator::validateUpdateFields($this->body, ['username', 'bio', 'avatar', 'password', 'codePostal']);
             return $this->respondOrFail(
                 $this->user->update($filteredData, $id),
                 'User updated successfully',
