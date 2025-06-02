@@ -10,7 +10,7 @@ RewriteRule ^ index.php [QSA,L]
 Options -Indexes
 
 # Redirection si quelqu’un tente d’accéder à un dossier sans index
-DirectoryIndex /app/src/login.thml
+DirectoryIndex ./app/src/login.thml
 
 # Rediriger vers une autre page si aucune page index n’existe
-ErrorDocument 403 /app/src/login.html
+ErrorDocument 403 ./app/src/login.html
