@@ -21,6 +21,46 @@ async function getCoordinates(postalCode) {
     };
 }
 
+ async function getGeoDataFromIP(ip) {
+    const url = `https://ipwho.is/${ip}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.success === true) {
+            return {
+                ip: ip,
+                latitude: data.latitude,
+                longitude: data.longitude,
+                city: data.city,
+                country: data.country
+            };
+        } else {
+            return { error: data.message || "Erreur inconnue" };
+        }
+    } catch (error) {
+        return { error: `Erreur fetch: ${error.message}` };
+    }
+}
+
+async function getPublicIPAndGeoData() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        const ip = data.ip;
+
+        console.log("✅ Adresse IP publique :", ip);
+
+        const geoData = await getGeoDataFromIP(ip);
+        saveLocation(geoData['latitude'], geoData['longitude']);
+    } catch (error) {
+        console.error("❌ Erreur lors de la récupération de l'adresse IP :", error.message);
+    }
+}
+
+
+
 // Sauvegarde la position via un appel POST
 function saveLocation(latitude, longitude) {
     const id = localStorage.getItem('id');
@@ -93,10 +133,12 @@ if ('geolocation' in navigator) {
 
 
                     `;
-                    if(data.codePostal) {
-                    const {lat, lon} = await getCoordinates(data.codePostal);
-                    saveLocation(lat, lon);
-                    }
+                    // if(data.codePostal) {
+                    // const {lat, lon} = await getCoordinates(data.codePostal);
+                    // saveLocation(lat, lon);
+                    // }
+                    
+
                 } else {
                     document.body.innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
                     console.error('Erreur lors de la récupération des données utilisateur');
