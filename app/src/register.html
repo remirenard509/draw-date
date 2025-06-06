@@ -62,7 +62,7 @@
     
                 if (response.ok) {
                     const result = await response.json();
-                    alert('Inscription réussie : ' + JSON.stringify(result));
+                    alert('Inscription réussie : ');
                 } else {
                     const error = await response.json();
                     alert('Erreur : ' + error.error);

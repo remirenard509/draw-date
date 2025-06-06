@@ -16,11 +16,9 @@ class MailController extends Controller {
     #[Route("POST", "/sendmail")]
  public function sendmail() {
     try {
-        error_log("Début méthode sendmail");
         $data = $this->body;
 
         if (!isset($data['Email'], $data['Name'], $data['Subject'])) {
-            error_log("Paramètres manquants : " . json_encode($data));
             throw new \Exception("Paramètres requis manquants");
         }
 
@@ -29,10 +27,7 @@ class MailController extends Controller {
         $subject = $data['Subject'];
         $content = $data['Content'];
 
-        error_log("Avant envoi Mailjet : $to_email, $to_name, $subject, $content");
-
-        $this->send($to_email, $to_name, $subject, $content);
-        return true;
+        return $this->send($to_email, $to_name, $subject, $content);
     } catch (\Exception $e) {
         error_log('Erreur dans sendmail() : ' . $e->getMessage());
         throw new HttpException("An unexpected error occurred.", 500);
@@ -72,14 +67,9 @@ public function send($to_email, $to_name, $subject, $content)
         ]
     ];
 
-    error_log("📧 Tentative d'envoi via Mailjet à $to_email ($to_name)");
-
     try {
         $response = $mj->post(Resources::$Email, ['body' => $body]);
-
-        error_log("✅ Mailjet réponse : " . $response->getStatus() . " - " . json_encode($response->getData()));
     } catch (\Exception $e) {
-        error_log("❌ Erreur d'envoi Mailjet : " . $e->getMessage());
         throw new HttpException("Erreur lors de l'envoi de l'email.", 500);
     }
   }

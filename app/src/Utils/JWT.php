@@ -63,4 +63,21 @@ class JWT {
         $payload = self::getPayLoad($jwt);
         return $payload && isset($payload['exp']) ? $payload['exp'] < time() : true;
     }
+
+    public static function validateWithIdAndExpiry($jwt, $expectedId) {
+        if (!self::verify($jwt)) {
+            return false;
+        }
+
+        if (self::isExpired($jwt)) {
+            return false;
+        }
+
+        $payload = self::getPayLoad($jwt);
+        if (!$payload || !isset($payload['id'])) {
+            return false;
+        }
+
+        return $payload['id'] == $expectedId;
+    }
 }

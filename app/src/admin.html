@@ -10,8 +10,16 @@
 <body>
     <h1>Admin</h1>
     <p>Bienvenue dans la section admin.</p>
-    <div> 
-        <h2>Liste des utilisateurs</h2>
+     <form id="loginForm">
+        <label for="email">Email :</label>
+        <input type="email" id="email" name="email" placeholder="Entrez votre email" required><br><br>
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe" required><br><br>
+
+        <button type="submit">Se connecter</button>
+    </form>
+    <div>
         <ul id="user-list"></ul>
     </div>
     <button id="logout">Déconnexion</button>
@@ -20,7 +28,37 @@
    document.getElementById('logout').addEventListener('click', () => {
     localStorage.removeItem('token');
     window.location.href = '/app/src/login.html';
-});
+    });
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Empêche la soumission classique du formulaire
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const data = { email, password };
+
+        try {
+            const response = await fetch('/app/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+                if (response.ok) {
+            const result = await response.json(); 
+            document.querySelector('#loginForm').style.display = 'none';
+            fetchUsers();
+        } else {
+            const error = await response.json();
+            alert('Erreur : ' + error.error);
+        }
+    } catch (err) {
+        console.error('Erreur lors de la requête :', err);
+        alert('Une erreur est survenue.');
+    }
+        });
 
 async function fetchUsers() {
     try {
@@ -54,7 +92,6 @@ async function fetchUsers() {
 }
 
 async function init() {
-    await fetchUsers();
 
     document.getElementById('user-list').addEventListener('click', async (event) => {
         const target = event.target;

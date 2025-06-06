@@ -2,6 +2,7 @@
 namespace App\Validators;
 
 use App\Utils\HttpException;
+use App\Utils\JWT;
 
 class UserValidator {
    

@@ -14,6 +14,7 @@ class AuthMiddleware {
                 throw new \Exception("Authorization header missing", 401);
             }
 
+
             $authHeader = $headers['Authorization'];
 
             // Vérifiez si le header Authorization contient un token Bearer
@@ -22,10 +23,15 @@ class AuthMiddleware {
             }
 
             $jwt = $matches[1];
+            $id = $headers['user-id'];
 
             // Vérifiez la validité du JWT
             if (!JWT::verify($jwt)) {
                 throw new \Exception("Invalid or expired token", 401);
+            }
+            error_log('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'.$id.$jwt);
+            if(isset($headers['user-id'])) {
+                return JWT::validateWithIdAndExpiry($jwt, $id);
             }
 
             // Si tout est valide, continuez la requête
