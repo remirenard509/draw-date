@@ -12,7 +12,7 @@ class MailController extends Controller {
     public function __construct($param) {
       parent::__construct($param);
     }
-
+// envoie un mail pour récupérer le mot de passe
     #[Route("POST", "/sendmail")]
  public function sendmail() {
     try {
@@ -34,7 +34,7 @@ class MailController extends Controller {
     }
 }
 
-
+// lié à la fonction sendmail
 public function send($to_email, $to_name, $subject, $content)
 {
     $mj = new Client(

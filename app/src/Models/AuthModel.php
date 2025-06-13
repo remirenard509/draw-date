@@ -1,5 +1,5 @@
 <?php
-
+// lié à AuthController
 namespace App\Models;
 
 use App\Models\SqlConnect;

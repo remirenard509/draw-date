@@ -1,5 +1,5 @@
 <?php
-
+// permet la connexion à la base de données
 namespace App\Models;
 
 use \PDO;

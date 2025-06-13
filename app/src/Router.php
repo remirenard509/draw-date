@@ -1,5 +1,5 @@
 <?php
-
+// redirige vers la bonne page en fonction de l'url
 namespace App;
 
 use App\Utils\Route;

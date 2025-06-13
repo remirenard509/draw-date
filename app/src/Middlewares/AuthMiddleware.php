@@ -1,5 +1,5 @@
 <?php 
-
+// permet du vérifier le token d'un utilisateur
 namespace App\Middlewares;
 
 use App\Utils\JWT;
@@ -29,7 +29,6 @@ class AuthMiddleware {
             if (!JWT::verify($jwt)) {
                 throw new \Exception("Invalid or expired token", 401);
             }
-            error_log('ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'.$id.$jwt);
             if(isset($headers['user-id'])) {
                 return JWT::validateWithIdAndExpiry($jwt, $id);
             }

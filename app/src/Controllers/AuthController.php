@@ -13,7 +13,7 @@ class AuthController extends Controller {
         parent::__construct($params);
         $this->auth = new AuthModel();
     }
-
+// enregistre un profil
     #[Route("POST", "/register")]
     public function register(): array {
         try {
@@ -26,7 +26,7 @@ class AuthController extends Controller {
             throw new HttpException($e->getMessage(), 400);
         }
     }
-
+// permet le login
     #[Route("POST", "/login")]
     public function login(): array {
         try {

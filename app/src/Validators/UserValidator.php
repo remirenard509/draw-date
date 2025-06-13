@@ -1,4 +1,5 @@
 <?php
+// valide les données des requêtes
 namespace App\Validators;
 
 use App\Utils\HttpException;

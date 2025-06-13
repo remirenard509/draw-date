@@ -1,5 +1,5 @@
 <?php
-
+// ensemble des fonctions liées à UserController
 namespace App\Models;
 
 use \PDO;

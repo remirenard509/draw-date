@@ -1,5 +1,5 @@
 let lastMessageId = null;
-
+// check les messages non lus et affiche une notification sur la page chat
 function notifyNewMessage(msg) {
     const sound = document.getElementById('notifSound');
     if (sound) sound.play();

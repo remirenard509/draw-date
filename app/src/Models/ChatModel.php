@@ -1,5 +1,5 @@
 <?php
-
+// ensemble des fonctions utilisées dans ChatController
 namespace App\Models;
 
 use \PDO;

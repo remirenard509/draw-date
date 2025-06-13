@@ -1,3 +1,5 @@
+//gére le dessin de dessin sur le canva
+
 class DrawingApp {
     constructor() {
         this.canvas = document.getElementById('canvas');

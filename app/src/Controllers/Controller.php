@@ -1,5 +1,6 @@
 <?php
 
+// récupére le header, le body et les paramètre d'une requête
 namespace App\Controllers;
 
 class Controller {

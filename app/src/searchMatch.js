@@ -1,3 +1,5 @@
+
+// back qui gère la recherche de match
 class DrawApp {
     constructor() {
         this.data = [];
@@ -20,7 +22,7 @@ class DrawApp {
         this.getNumberOfSuperMatch();
         this.paypal();
     }
-
+// fonction pour payer via paypal
     paypal () {
                 paypal.Buttons({
             createOrder: (data, actions) => {
@@ -50,7 +52,7 @@ class DrawApp {
             }
         }).render('#paypal-button-container');
     }
-
+// fonction qui affiche les dessins à trouver
     async fetchUserDrawings() {
         try {
             const response = await fetch(`/app/draws/${this.id}`, {
@@ -73,14 +75,14 @@ class DrawApp {
         }
         return [];
     }
-
+// fonction pour mélanger les dessins
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
-
+// affiche les dessins
     displayDrawing(draw) {
         try {
         const drawsContainer = document.getElementById('draws-container');
@@ -94,21 +96,21 @@ class DrawApp {
              window.location.href = 'profil.html';
         }
     }
-
+// passer au dessin suivant
     nextDrawing() {
         this.index = (this.index + 1) % this.data.length;
         this.displayDrawing(this.data[this.index]);
         this.hideHint();
         this.hidedescription();
     }
-
+// passser au dessin précédent
     previousDrawing() {
         this.index = (this.index - 1 + this.data.length) % this.data.length;
         this.displayDrawing(this.data[this.index]);
         this.hideHint();
         this.hidedescription();
     }
-
+// compare les desciptions
     compareDescriptions() {
         if (!this.randomDrawing) {
             alert('Aucun dessin à comparer. Veuillez d\'abord charger un dessin.');
@@ -129,7 +131,7 @@ class DrawApp {
            this.displayHintTry();
         }
     }
-
+// match avec un utilisateur. utilise un superMatch
     async superMatch() {
          const response = await fetch(`/app/superMatch/${this.id}`, {
                 method: 'PATCH',
@@ -145,7 +147,7 @@ class DrawApp {
                 window.location.reload();
             }
     }
-
+// ajoute 20 superMatch si le paiement paypal est accepté
     async addSuperMatch() {
         this.numberOfSuperMatch += 20;
         const response = await fetch(`/app/superMatch/${this.id}`, {
@@ -161,7 +163,7 @@ class DrawApp {
             window.location.reload();
         }
     }
-
+// récupere et affiche le nombre de supermatch restant si il est strictement positif
     async getNumberOfSuperMatch() {
         try{
              const response = await fetch(`/app/superMatch/${this.id}`, {
@@ -186,7 +188,7 @@ class DrawApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// enregistre le match dans le base de donnée si le dessin et la description correspondent
     async match() {
         try {
             const response = await fetch(`/app/match`, {
@@ -207,32 +209,34 @@ class DrawApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// affiche l'indice
     displayHint() {
         const drawDescription = this.randomDrawing.draw_description;
         const hintText = this.hint(drawDescription);
         document.getElementById('hint').innerText = hintText;
     }
-
+// affiche les lettres qui corespondent entre l'essai et la vraie description
     displayHintTry() {  
         const tryInput = document.getElementById('draw_description_try').value;
         const hintText = this.hintTry(this.randomDrawing.draw_description, tryInput);
         document.getElementById('hint').innerText = hintText;
     }
-
+// cache l'indice
     hideHint() {
         document.getElementById('hint').innerText = '';
     }
+// cache la description
     hidedescription() {
         document.getElementById('draw_description_try').value = '';
     }
-
+// fonction utilisée avec display hint. elle gère les espaces
     hint(description) {
         return description
             .split(' ')
             .map(word => word.charAt(0) + word.slice(1).split('').map(letter => '.').join(''))
             .join(' ');
     }
+// compare la description et l'essai
     hintTry(description, tryInput) {
         const descriptionArray = description.toLowerCase().split('');
         const tryArray = tryInput.toLowerCase().split('');
@@ -249,7 +253,7 @@ class DrawApp {
             })
             .join('');
     }
-
+// gère la deconnexion
     logout() {
         localStorage.removeItem('id');
         localStorage.removeItem('token');

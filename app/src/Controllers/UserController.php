@@ -19,14 +19,14 @@ class UserController extends Controller {
         $this->auth = new AuthModel();
         parent::__construct($param);
     }
-
+// gére le succés ou l'échec de la réquête
     protected function respondOrFail(bool $success, string $successMsg, string $failMsg): array {
         if (!$success) {
             throw new HttpException($failMsg, 500);
         }
         return ['message' => $successMsg];
     }
-
+// supprime un utilisateur
     #[Route("DELETE", "/user/:id", middlewares: [AuthMiddleware::class])]
     public function deleteUser() {
         try {
@@ -41,7 +41,7 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
-
+// récupére les données de tous les utilisateurs pour le mode admin
     #[Route("GET", "/users", middlewares: [AuthMiddleware::class])]
     public function getUsers() {
         try {
@@ -51,7 +51,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to retrieve users.", 500);
         }
     }
-
+// met à jour les données d'un utilisateur
     #[Route("PATCH", "/user/:id", middlewares: [AuthMiddleware::class])]
     public function updateUser() {
         try {
@@ -67,7 +67,7 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
-
+// sauvegarde le dessin
     #[Route("POST", "/save-drawing", middlewares: [AuthMiddleware::class])]
     public function saveDrawing() {
         try {
@@ -79,7 +79,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to save drawing.", 500);
         }
     }
-
+// sauvergarde la description
     #[Route("POST", "/save-description", middlewares: [AuthMiddleware::class])]
     public function saveDescription() {
         try {
@@ -91,7 +91,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to save description.", 500);
         }
     }
-
+// récupére les données d'un utilisateur pour afficher le profil
     #[Route("GET", "/user/:id", middlewares: [AuthMiddleware::class])]
     public function getUser() {
         try {
@@ -102,7 +102,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to retrieve user.", 500);
         }
     }
-
+// récupére les dessins des utiisateurs pour la recherche de match
     #[Route("GET", "/draws/:id", middlewares: [AuthMiddleware::class])]
     public function getDraws() {
         try {
@@ -113,7 +113,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to retrieve drawings.", 500);
         }
     }
-
+// mode admin, active ou déactive un utilisateur
     #[Route("PATCH", "/user/:id/activated", middlewares: [AuthMiddleware::class])]
     public function updateActive() {
         try {
@@ -130,7 +130,7 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
-
+// récupére le surnom d'un utilisateur
     #[Route("GET", "/username", middlewares: [AuthMiddleware::class])]
     public function getUsername() {
         try {
@@ -140,7 +140,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to retrieve username.", 500);
         }
     }
-
+// récupére le nombre de supermatch, page recherche de match
     #[Route("GET", "/superMatch/:id", middlewares: [AuthMiddleware::class])]
     public function getNumberOfSuperMatch() {
         try {
@@ -150,7 +150,7 @@ class UserController extends Controller {
             throw new HttpException("Failed to retrieve number of supermatch.", 500);
         }
     }
-
+// augmente le nombre de superMatch de 20 lors d'un achat paypal
     #[Route("PATCH", "/superMatch/:id", middlewares: [AuthMiddleware::class])]
     public function setSuperMatch() {
         try {
@@ -160,12 +160,12 @@ class UserController extends Controller {
             throw new HttpException("Failed to set number of supermatch.", 500);
         }
     }
-
+// récupére l'id à partir du mail pour l'enregistrer dans le local storage
     #[Route("POST", "/email")]
     public function getIdFromEmail() {
         return $this->user->getIdFromEmail($this->body);
     }
-
+// permet de récupérer le compte d'un utilisateur lors qu'il clique sur le lien
     #[Route("PATCH", "/userReset/:id")]
     public function resetPassword() {
         try {
@@ -181,6 +181,8 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
+
+// sauvegarde la localisation dans la base de données. longitude , latitude
     #[Route("POST", "/save-location/:id")]
     public function savaLocation() {
         try {

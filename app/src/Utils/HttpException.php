@@ -1,5 +1,5 @@
 <?php
-
+// gére les exceptions
 namespace App\Utils;
 
 use Exception;

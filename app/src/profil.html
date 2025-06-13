@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- page de profil -->
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +9,9 @@
     <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon">
 </head>
 <body>
-    <script>
-    // récupérer la localisation
- // Récupère les coordonnées d'un code postal avec Nominatim (OpenStreetMap)
+<script>
+// récupérer la localisation
+// Récupère les coordonnées d'un code postal avec Nominatim (OpenStreetMap)
 async function getCoordinates(postalCode) {
    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${postalCode}, France&format=json`);
     const data = await response.json();
@@ -21,6 +22,7 @@ async function getCoordinates(postalCode) {
     };
 }
 
+// récupére l'ip public d'un utilisateur sur son appareil
  async function getGeoDataFromIP(ip) {
     const url = `https://ipwho.is/${ip}`;
 
@@ -43,7 +45,7 @@ async function getCoordinates(postalCode) {
         return { error: `Erreur fetch: ${error.message}` };
     }
 }
-
+// récupére la localisation de l'utilisateur à partir de son ip public
 async function getPublicIPAndGeoData() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
@@ -95,69 +97,62 @@ if ('geolocation' in navigator) {
 } else {
     console.error("La géolocalisation n'est pas supportée par ce navigateur.");
 }
+// récupére et affiche les données utilisateurs
+async function fetchUserProfile() {
+    const id = localStorage.getItem('id');
 
-
-
-        async function fetchUserProfile() {
-            const id = localStorage.getItem('id');
-
-            try {
-                const response = await fetch('/app/user/' + id, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json',
-                        'user-id': id
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    document.body.innerHTML = `
-                        <h1>Profil de ${data.username}</h1>
-                        <img src="${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100">
-                        <p>dob: ${data.dob}</p>
-                        <p>bio: ${data.bio}</p>
-                        <div class="svg-container">
-                            <svg width="300" height="300" style="border : 1px solid #ccc; "viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                ${data.draw_svg}
-                            </svg>
-                        </div>
-                        <p>draw_description: ${data.draw_description}</p>
-                        <button onclick="window.location.href='/app/src/searchMatch.html'"><img src="/app/src/Assets/home.png" alt="home" height="26px" width="26px"></button>
-                        <button onclick="window.location.href='/app/src/chat.html'"><img src="/app/src/Assets/chat.png" alt="chat" height="26px" width="26px"></button>
-                        <button onclick="window.location.href='/app/src/draw.html'"><img src="/app/src/Assets/drawing.png" alt="draw" height="26px" width="26px"></button>
-                        <button onclick="window.location.href='/app/src/edit.html'"><img src="/app/src/Assets/edit-profil.png" alt="edit-profil" height="26px" width="26px"></button>
-                        <button onclick="window.location.href='/app/src/editPassword.html'"><img src="/app/src/Assets/edit-password.png" alt="edit-password" height="26px" width="26px"></button>
-                        <button onclick="window.location.href='/app/src/delete.html'"><img src="/app/src/Assets/delete.png" alt="delete" height="26px" width="26px"></button>
-                        <button onclick="logout()"><img src="/app/src/Assets/logout.png" alt="logout" height="26px" width="26px"></button>
-
-
-                    `;
-                    // if(data.codePostal) {
-                    // const {lat, lon} = await getCoordinates(data.codePostal);
-                    // saveLocation(lat, lon);
-                    // }
-                    
-
-                } else {
-                    document.body.innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
-                    console.error('Erreur lors de la récupération des données utilisateur');
-                    setTimeout(() => {
-                        window.location.href = '/app/src/login.html';
-                    }, 2000);
-                }
-            } catch (error) {
-                document.body.innerHTML = '<p>Erreur de réseau.</p>';
-                console.error('Erreur de réseau:', error);
+    try {
+        const response = await fetch('/app/user/' + id, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json',
+                'user-id': id
             }
-        }
-        function logout() {
-            localStorage.removeItem('id');
-            localStorage.removeItem('token');
-            window.location.href = '/app/src/login.html';
-        }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            document.body.innerHTML = `
+                <h1>Profil de ${data.username}</h1>
+                <img src="${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100">
+                <p>dob: ${data.dob}</p>
+                <p>bio: ${data.bio}</p>
+                <div class="svg-container">
+                    <svg width="300" height="300" style="border : 1px solid #ccc; "viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        ${data.draw_svg}
+                    </svg>
+                </div>
+                <p>draw_description: ${data.draw_description}</p>
+                <button title="recherche de match" onclick="window.location.href='/app/src/searchMatch.html'" ><img src="/app/src/Assets/home.png"  alt="home" height="26px" width="26px"></button>
+                <button title="chat" onclick="window.location.href='/app/src/chat.html'"><img src="/app/src/Assets/chat.png" alt="chat" height="26px" width="26px"></button>
+                <button title="dessin et description" onclick="window.location.href='/app/src/draw.html'"><img src="/app/src/Assets/drawing.png" alt="draw" height="26px" width="26px"></button>
+                <button title="modifier son profil" onclick="window.location.href='/app/src/edit.html'"><img src="/app/src/Assets/edit-profil.png" alt="edit-profil" height="26px" width="26px"></button>
+                <button title="modifier son mot de passe" onclick="window.location.href='/app/src/editPassword.html'"><img src="/app/src/Assets/edit-password.png" alt="edit-password" height="26px" width="26px"></button>
+                <button title="supprimer son profil" onclick="window.location.href='/app/src/delete.html'"><img src="/app/src/Assets/delete.png" alt="delete" height="26px" width="26px"></button>
+                <button title="deconnexion" onclick="logout()"><img src="/app/src/Assets/logout.png" alt="logout" height="26px" width="26px"></button>
 
-        fetchUserProfile();
-    </script>
+
+            `;
+    } else {
+        document.body.innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
+        console.error('Erreur lors de la récupération des données utilisateur');
+        setTimeout(() => {
+            window.location.href = '/app/src/login.html';
+        }, 2000);
+    }
+    } catch (error) {
+        document.body.innerHTML = '<p>Erreur de réseau.</p>';
+        console.error('Erreur de réseau:', error);
+    }
+}
+// déconnexion
+function logout() {
+    localStorage.removeItem('id');
+    localStorage.removeItem('token');
+    window.location.href = '/app/src/login.html';
+}
+
+fetchUserProfile();
+</script>
 </body>
 </html>

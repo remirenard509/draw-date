@@ -1,3 +1,5 @@
+// gère le back de la page chat
+
 class ChatApp {
     constructor(token) {
         this.token = token;
@@ -16,7 +18,7 @@ class ChatApp {
         this.addEventListeners();
         this.getMatch();
     }
-
+// gère les boutons et la liste déroulante
     addEventListeners() {
         this.userSelect.addEventListener('change', () => {
             this.selectedUserId = this.userSelect.value;
@@ -40,7 +42,7 @@ class ChatApp {
             }
         });
     }
-
+// récupére les données d'un utilisateur pour afficher quelques informations
     async fetchProfil() {
         try {
             const response = await fetch(`/app/displayprofil/${this.selectedUserId}`, {
@@ -59,14 +61,14 @@ class ChatApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// affiche les informations récupérées de fetchProfil
     displayProfil(data) {
         document.querySelector('#displayProfil').innerHTML = `
         ${data.username} ${data.bio}
         <img src="${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100">
     `;
     }
-
+// gère l'envoie de message dans le chat
     async sendMessage(senderId, receiverId, message) {
         try {
             const response = await fetch(`/app/send`, {
@@ -87,7 +89,7 @@ class ChatApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// récupére les utilisateurs qui ont matché avec l'utilisateur
     async getMatch() {
         try {
             const response = await fetch(`/app/match/${this.id}`, {
@@ -108,7 +110,7 @@ class ChatApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// récupére les messages entre 2 utilisateurs
     async getMessages(receiverId, senderId) {
         try {
             const response = await fetch(`/app/chat`, {
@@ -129,7 +131,7 @@ class ChatApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// récupére les surnoms des utilisateurs pour la liste déroulante
     async getUsers() {
         try {
             const response = await fetch(`/app/username`, {
@@ -150,7 +152,7 @@ class ChatApp {
             console.error('Erreur réseau :', error);
         }
     }
-
+// affiche le menu déroulant
     populateUserSelect(users) {
         this.userSelect.innerHTML = '<option value="">--Sélectionner un utilisateur--</option>';
         const uniqueUsers = users
@@ -167,7 +169,7 @@ class ChatApp {
         });
         
     }
-
+// affiche la conversation entre 2 utilisateurs
     displayMessages(messages) {
         this.contentDiv.innerHTML = '';
         messages.forEach(msg => {
@@ -192,7 +194,7 @@ class ChatApp {
         document.querySelector(".messageAndDraw").style.visibility = "visible";
         
     }
-
+// marque un ou plusieurs messages comme lus lorsque l'on ouvre une discussion
     async setMessageAsRead(senderId) {
         try {
             const response = await fetch(`/app/messages/read/${this.id}`, {
@@ -213,7 +215,7 @@ class ChatApp {
         }
     }
 }
-
+// redirige vers la page login si l'utilisateur n'est pas authentifié
 window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     if (token) {

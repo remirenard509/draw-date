@@ -1,5 +1,5 @@
 <?php
-
+// redirige les requêtes vers la bonne route
 namespace App\Utils;
 
 #[\Attribute]

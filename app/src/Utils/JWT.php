@@ -1,5 +1,5 @@
 <?php
-
+// génère le JWT, vérifie l'intégrité avec l'id et la date de validité
 namespace App\Utils;
 
 class JWT {
