@@ -123,7 +123,7 @@ class UserModel extends SqlConnect {
     public function getDraws(int $id): array {
         try {
             $query = "
-                SELECT id, draw_svg, draw_description
+                SELECT id, draw_svg, draw_description, latitude, longitude, gender, search_gender
                 FROM {$this->table}
                 WHERE draw_svg IS NOT NULL
                 AND id != :id

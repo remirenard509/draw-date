@@ -8,6 +8,10 @@ class DrawApp {
         this.id = localStorage.getItem('id');
         this.token = localStorage.getItem('token');
         this.numberOfSuperMatch = 0;
+        this.latitude = localStorage.getItem('latitude');
+        this.longitude = localStorage.getItem('longitude');
+        this.gender = localStorage.getItem('gender');
+        this.search_gender = localStorage.getItem('search_gender');
         this.init();
     }
 
@@ -17,11 +21,15 @@ class DrawApp {
             console.error('Les données récupérées ne sont pas un tableau.');
             return;
         }
-        this.shuffleArray(this.data);
-        this.displayDrawing(this.data[this.index]);
+        const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, 200);
+        const dataShuffle = this.shuffleArray(dataFilter);
+         console.log(dataShuffle);
+        this.displayDrawing(dataShuffle[this.index]);
+       
         this.getNumberOfSuperMatch();
         this.paypal();
     }
+
 // fonction pour payer via paypal
     paypal () {
                 paypal.Buttons({
@@ -52,7 +60,8 @@ class DrawApp {
             }
         }).render('#paypal-button-container');
     }
-// fonction qui affiche les dessins à trouver
+
+// fonction qui récupère les dessins à trouver
     async fetchUserDrawings() {
         try {
             const response = await fetch(`/app/draws/${this.id}`, {
@@ -75,13 +84,54 @@ class DrawApp {
         }
         return [];
     }
+
+// Fonction pour calculer la distance entre deux coordonnées géographiques
+    calculDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Rayon de la Terre en kilomètres
+        const toRad = x => x * Math.PI / 180;
+
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        const distance = R * c;
+
+        return distance; // en kilomètres
+    }
+
+// Fonction principale : filtrer par genre ET distance maximale
+    filtrerParGenreEtDistance(data, genreRecherche, referenceLat, referenceLon, distanceMaxKm) {
+        return data
+            .filter(item => item.gender === genreRecherche)
+            .map(item => {
+                const distance = this.calculDistance(referenceLat, referenceLon, item.latitude, item.longitude);
+                return { ...item, distance };
+            })
+            .filter(item => item.distance <= distanceMaxKm)
+    }
+
 // fonction pour mélanger les dessins
     shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+        if (!Array.isArray(array) || array.length <= 3) {
+            return array;
         }
+
+        const shuffled = [...array]; // copie pour éviter de modifier l'original
+
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        return shuffled;
     }
+
 // affiche les dessins
     displayDrawing(draw) {
         try {
