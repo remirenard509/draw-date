@@ -34,14 +34,15 @@
                 <div id="paypal-button-container"></div>
                 <p id="result-message"></p>
         </div>
+        <label for="rangeSlider">filtre Km : <span id="valAffichee">50</span></label>
+        <br>
+        <input type="range" id="rangeSlider" name="rangeSlider" min="10" max="500" value="50" step="10">
     </div>
     
     <script
         src="https://www.paypal.com/sdk/js?client-id=AfHNndLe4NbxBw5DoM5kYw8w5KpemFVv1OWYcQ3jj6Un6bvXZJiMR8--eqmoQee4KtxkzGtAHtD9Bi8y&buyer-country=FR&currency=EUR&components=buttons&disable-funding=venmo,paylater,card"
         data-sdk-integration-source="developer-studio"
     ></script>
-    
-
     <script src="searchMatch.js"></script>
 </body>
 </html>

@@ -12,6 +12,7 @@ class DrawApp {
         this.longitude = localStorage.getItem('longitude');
         this.gender = localStorage.getItem('gender');
         this.search_gender = localStorage.getItem('search_gender');
+        this.distanceFilter = document.querySelector("#rangeSlider").value;
         this.init();
     }
 
@@ -21,13 +22,25 @@ class DrawApp {
             console.error('Les données récupérées ne sont pas un tableau.');
             return;
         }
-        const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, 200);
+        const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, this.distanceFilter);
         const dataShuffle = this.shuffleArray(dataFilter);
-         console.log(dataShuffle);
         this.displayDrawing(dataShuffle[this.index]);
-       
+        this.displayValueFilter();
         this.getNumberOfSuperMatch();
         this.paypal();
+       
+    }
+// fonction pour afficher la valeur du filtre
+    displayValueFilter() {
+        const slider = document.getElementById("rangeSlider");
+        const valAffichee = document.getElementById("valAffichee");
+
+        slider.addEventListener("input", () => {
+            valAffichee.textContent = slider.value;
+            const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, slider.value);
+            const dataShuffle = this.shuffleArray(dataFilter);
+            this.displayDrawing(dataShuffle[this.index]);
+        });
     }
 
 // fonction pour payer via paypal
