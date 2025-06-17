@@ -34,9 +34,9 @@
                 <div id="paypal-button-container"></div>
                 <p id="result-message"></p>
         </div>
-        <label for="rangeSlider">filtre Km : <span id="valAffichee">50</span></label>
-        <br>
-        <input type="range" id="rangeSlider" name="rangeSlider" min="10" max="500" value="50" step="10">
+        <label for="distance">Distance (en km) :</label>
+        <input type="number" id="distance" name="distance" min="10" max="500" step="10" value="50" required>
+        <span id="distanceValue"></span>
     </div>
     
     <script

@@ -12,34 +12,51 @@ class DrawApp {
         this.longitude = localStorage.getItem('longitude');
         this.gender = localStorage.getItem('gender');
         this.search_gender = localStorage.getItem('search_gender');
-        this.distanceFilter = document.querySelector("#rangeSlider").value;
+        this.distanceMax = 50;
+        this.dataFilter = [];
+        this.dataShuffle = [];
         this.init();
+        this.paypal();
     }
 
     async init() {
         this.data = await this.fetchUserDrawings();
-        if (!Array.isArray(this.data)) {
-            console.error('Les données récupérées ne sont pas un tableau.');
-            return;
-        }
-        const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, this.distanceFilter);
-        const dataShuffle = this.shuffleArray(dataFilter);
-        this.displayDrawing(dataShuffle[this.index]);
-        this.displayValueFilter();
+        this.listenInputFilter();
         this.getNumberOfSuperMatch();
-        this.paypal();
-       
     }
-// fonction pour afficher la valeur du filtre
-    displayValueFilter() {
-        const slider = document.getElementById("rangeSlider");
-        const valAffichee = document.getElementById("valAffichee");
+       
+// fonction pour afficher la valeur du filtre et recharger les dessins
+    listenInputFilter() {
+        const input = document.getElementById("distance");
+        const output = document.getElementById("distanceValue");
 
-        slider.addEventListener("input", () => {
-            valAffichee.textContent = slider.value;
-            const dataFilter = this.filtrerParGenreEtDistance(this.data, this.search_gender, this.latitude, this.longitude, slider.value);
-            const dataShuffle = this.shuffleArray(dataFilter);
-            this.displayDrawing(dataShuffle[this.index]);
+
+        input.addEventListener("input", () => {
+            this.distanceMax = input.value;
+
+            // Filtrer les données
+            this.dataFilter = this.filtrerParGenreEtDistance(
+                this.data,
+                this.search_gender,
+                this.latitude,
+                this.longitude,
+                this.distanceMax
+            );
+           
+
+            // Mélanger les dessins (et stocker le résultat)
+            this.dataShuffle = this.shuffleArray(this.dataFilter);
+
+            // Réinitialiser l'index si nécessaire
+            this.index = 0;
+
+            // Afficher le premier dessin
+            if (this.dataShuffle.length > 0) {
+                 document.querySelector('#draws-container').style.display = "";
+                this.displayDrawing(this.dataShuffle[this.index]);
+            } else {
+              document.querySelector('#draws-container').style.display = "none";
+            }
         });
     }
 
@@ -114,20 +131,33 @@ class DrawApp {
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         const distance = R * c;
-
         return distance; // en kilomètres
     }
 
-// Fonction principale : filtrer par genre ET distance maximale
+// Fonction filtrer par genre ET distance maximale
     filtrerParGenreEtDistance(data, genreRecherche, referenceLat, referenceLon, distanceMaxKm) {
         return data
-            .filter(item => item.gender === genreRecherche)
+            // Calculer distance et filtrer par distance max
             .map(item => {
-                const distance = this.calculDistance(referenceLat, referenceLon, item.latitude, item.longitude);
-                return { ...item, distance };
+                const lat = parseFloat(item.latitude);
+                const lon = parseFloat(item.longitude);
+
+                if (isNaN(lat) || isNaN(lon)) {
+                    return { ...item, distance: Infinity }; // exclu par la suite
+                }
+
+                const dist = this.calculDistance(parseFloat(referenceLat), parseFloat(referenceLon), lat, lon);
+                return { ...item, distance: dist };
             })
             .filter(item => item.distance <= distanceMaxKm)
+            // Filtrer ensuite par genre recherché
+            .filter(item => {
+                const genreItem = item.gender ? item.gender.toString().toLowerCase().trim() : "";
+                const genreCherche = genreRecherche.toString().toLowerCase().trim();
+                return genreItem === genreCherche;
+            });
     }
+
 
 // fonction pour mélanger les dessins
     shuffleArray(array) {
@@ -156,20 +186,19 @@ class DrawApp {
         this.randomDrawing = draw;
         }  catch (error) {
             alert("Aucun nouveau dessin à afficher", error);
-             window.location.href = 'profil.html';
         }
     }
 // passer au dessin suivant
     nextDrawing() {
         this.index = (this.index + 1) % this.data.length;
-        this.displayDrawing(this.data[this.index]);
+        this.displayDrawing(this.dataShuffle[this.index]);
         this.hideHint();
         this.hidedescription();
     }
 // passser au dessin précédent
     previousDrawing() {
         this.index = (this.index - 1 + this.data.length) % this.data.length;
-        this.displayDrawing(this.data[this.index]);
+        this.displayDrawing(this.dataShuffle[this.index]);
         this.hideHint();
         this.hidedescription();
     }

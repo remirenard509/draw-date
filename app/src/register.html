@@ -33,8 +33,9 @@
             <option value="other">Autre</option>
         </select><br><br>
 
-        <label for="dob">Date de naissance :</label>
+        <div style="display: block;"><label for="dob">Date de naissance :</label>
         <input type="date" id="dob" name="dob" required><br><br>
+        <span id="ageMessage" style="color: red;"></span>
 
         <label for="bio">Bio :</label><br>
         <textarea id="bio" name="bio" rows="4" cols="50" placeholder="Parlez-nous un peu de vous..."></textarea><br><br>
@@ -46,6 +47,33 @@
     <button onclick="window.location.href='/app/src/login.html'">Se connecter</button>
 
     <script>
+        document.getElementById("dob").addEventListener("change", function () {
+            const input = this.value;
+            const message = document.getElementById("ageMessage");
+            
+            if (!input) {
+                message.textContent = "";
+                return;
+            }
+
+            const birthDate = new Date(input);
+            const today = new Date();
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            if (age >= 18) {
+                message.style.color = "green";
+                message.textContent = "✅ Vous êtes majeur(e).";
+            } else {
+                message.style.color = "red";
+                message.textContent = "❌ Vous devez avoir au moins 18 ans.";
+                window.location.href = '/app/src/login.html'
+            }
+        });
         document.getElementById('registerForm').addEventListener('submit', async function(event) {
             event.preventDefault();
     
