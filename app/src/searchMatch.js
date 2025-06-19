@@ -145,7 +145,7 @@ class DrawApp {
                 const lat = parseFloat(item.latitude);
                 const lon = parseFloat(item.longitude);
 
-                if (distanceFiltrable && !isNaN(lat) && !isNaN(lon)) {
+                if (distanceFiltrable &&  !isNaN(lat) && !isNaN(lon)) {
                     const dist = this.calculDistance(latRef, lonRef, lat, lon);
                     return { ...item, distance: dist };
                 } else {
