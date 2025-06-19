@@ -11,17 +11,6 @@
 <body>
 <script>
 // récupérer la localisation
-// Récupère les coordonnées d'un code postal avec Nominatim (OpenStreetMap)
-async function getCoordinates(postalCode) {
-   const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${postalCode}, France&format=json`);
-    const data = await response.json();
-    if (data.length === 0) throw new Error("Code postal non trouvé");
-    return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon)
-    };
-}
-
 // récupére l'ip public d'un utilisateur sur son appareil
  async function getGeoDataFromIP(ip) {
     const url = `https://ipwho.is/${ip}`;
@@ -84,21 +73,6 @@ function saveLocation(latitude, longitude) {
     });
 }
 
-// Vérifie si la géolocalisation est disponible et récupère la position
-if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-        position => {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            saveLocation(latitude, longitude);
-        },
-        error => {
-            console.error("Erreur de géolocalisation :", error.message);
-        }
-    );
-} else {
-    console.error("La géolocalisation n'est pas supportée par ce navigateur.");
-}
 // récupére et affiche les données utilisateurs
 async function fetchUserProfile() {
     const id = localStorage.getItem('id');
