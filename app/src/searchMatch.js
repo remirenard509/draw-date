@@ -136,21 +136,26 @@ class DrawApp {
 
 // Fonction filtrer par genre ET distance maximale
     filtrerParGenreEtDistance(data, genreRecherche, referenceLat, referenceLon, distanceMaxKm) {
+        const latRef = parseFloat(referenceLat);
+        const lonRef = parseFloat(referenceLon);
+        const distanceFiltrable = !isNaN(latRef) && !isNaN(lonRef);
+
         return data
-            // Calculer distance et filtrer par distance max
             .map(item => {
                 const lat = parseFloat(item.latitude);
                 const lon = parseFloat(item.longitude);
 
-                if (isNaN(lat) || isNaN(lon)) {
-                    return { ...item, distance: Infinity }; // exclu par la suite
+                if (distanceFiltrable && !isNaN(lat) && !isNaN(lon)) {
+                    const dist = this.calculDistance(latRef, lonRef, lat, lon);
+                    return { ...item, distance: dist };
+                } else {
+                    return { ...item, distance: 0 }; // distance fictive pour compatibilité
                 }
-
-                const dist = this.calculDistance(parseFloat(referenceLat), parseFloat(referenceLon), lat, lon);
-                return { ...item, distance: dist };
             })
-            .filter(item => item.distance <= distanceMaxKm)
-            // Filtrer ensuite par genre recherché
+            .filter(item => {
+                // Si distance filtrable, on vérifie qu'elle est inférieure à la distance max
+                return !distanceFiltrable || item.distance <= distanceMaxKm;
+            })
             .filter(item => {
                 const genreItem = item.gender ? item.gender.toString().toLowerCase().trim() : "";
                 const genreCherche = genreRecherche.toString().toLowerCase().trim();
