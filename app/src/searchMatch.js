@@ -12,7 +12,7 @@ class DrawApp {
         this.longitude = localStorage.getItem('longitude');
         this.gender = localStorage.getItem('gender');
         this.search_gender = localStorage.getItem('search_gender');
-        this.distanceMax = 50;
+        this.distanceMax = 0;
         this.dataFilter = [];
         this.dataShuffle = [];
         this.init();
