@@ -26,6 +26,46 @@ class UserController extends Controller {
         }
         return ['message' => $successMsg];
     }
+// save avatar
+#[Route("POST", "/user/:id/upload-avatar", middlewares: [AuthMiddleware::class])]
+public function uploadAvatar() {
+    try {
+        if (!isset($_FILES['avatar'])) {
+            throw new HttpException("Aucun fichier envoyé", 400);
+        }
+
+        $file = $_FILES['avatar'];
+        $uploadDir = __DIR__ . '/../../public/uploads/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $filename = uniqid() . '-' . basename($file['name']);
+        $uploadPath = $uploadDir . $filename;
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new HttpException("Erreur fichier : code " . $file['error'], 400);
+        }
+
+        if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            throw new HttpException("Erreur lors du transfert", 500);
+        }
+
+        $avatarUrl = '/uploads/' . $filename;
+
+        // ✅ Retour JSON manuel
+        header('Content-Type: application/json');
+        echo json_encode(['avatarUrl' => $avatarUrl]);
+        exit;
+
+    } catch (\Exception $e) {
+        error_log('Upload avatar : ' . $e->getMessage());
+        throw new HttpException("Upload échoué", 500);
+    }
+}
+
+
+
 // supprime un utilisateur
     #[Route("DELETE", "/user/:id", middlewares: [AuthMiddleware::class])]
     public function deleteUser() {
@@ -52,11 +92,23 @@ class UserController extends Controller {
         }
     }
 // met à jour les données d'un utilisateur
-    #[Route("PATCH", "/user/:id", middlewares: [AuthMiddleware::class])]
+   #[Route("PATCH", "/user/:id", middlewares: [AuthMiddleware::class])]
     public function updateUser() {
         try {
-            $id = UserValidator::validateId($this->params['id']);
-            $filteredData = UserValidator::validateUpdateFields($this->body, ['username', 'bio', 'avatar', 'password', 'codePostal']);
+            // Log utile pour déboguer
+            error_log('PARAMS : ' . print_r($this->params, true));
+            error_log('BODY : ' . print_r($this->body, true));
+
+            $rawId = $this->params['id'];
+            $id = is_object($rawId) ? (string) ($rawId->id ?? '') : (string) $rawId;
+
+            $id = UserValidator::validateId($id);
+
+            $filteredData = UserValidator::validateUpdateFields(
+                $this->body,
+                ['username', 'bio', 'avatar', 'password']
+            );
+
             return $this->respondOrFail(
                 $this->user->update($filteredData, $id),
                 'User updated successfully',
@@ -67,6 +119,7 @@ class UserController extends Controller {
             throw new HttpException("An unexpected error occurred.", 500);
         }
     }
+
 // sauvegarde le dessin
     #[Route("POST", "/save-drawing", middlewares: [AuthMiddleware::class])]
     public function saveDrawing() {

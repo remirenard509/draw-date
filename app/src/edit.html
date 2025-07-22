@@ -1,96 +1,164 @@
 <!DOCTYPE html>
-<!-- page pour modifier le profil -->
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier le profil</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modifier le profil</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="/app/src/Assets/favico.png" type="image/x-icon" />
 </head>
 <body>
-    <div id="content">
-        <p>Chargement des données utilisateur...</p>
-    </div>
-    <button id="backButton" style="display: none;" onclick="window.location.href='/app/src/profil.html'">Retour au profil</button>
+   <h1>Modifier votre profil</h1>
+   <p>Nom : <span id="nom" class="editable">Chargement...</span></p>
+   <p>Bio : <span id="bio" class="editable">Chargement ...</span></p>
+   <label for="avatarInput">Choisir une image :</label>
+    <input type="file" id="avatarInput" accept="image/*" />
+    <img id="avatarPreview" src="" alt="Avatar" style="max-width: 200px; display: block; margin-top: 10px;" />
 
-    <script>
-        async function fetchUserProfile() {
-            const id = localStorage.getItem('id');
-            if (!id) {
-                document.getElementById('content').innerHTML = '<p>Utilisateur non connecté.</p>';
-                return;
-            }
+    <button id="backButton" onclick="window.location.href='/app/src/profil.html'"><img src="/app/src/Assets/profil.png" alt="profil" height="26px" width="26px"></button>
 
-            try {
-                const response = await fetch('/app/user/' + id, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const content = document.getElementById('content');
-                    content.innerHTML = `
-                        <h1>Modifier le profil de ${data.username}</h1>
-                        <form id="editForm">
-                            <input type="hidden" name="id" value="${id}">
-                            <label for="username">Nom d'utilisateur:</label>
-                            <input type="text" id="username" name="username" value="${data.username}" required>
-                            <br>
-                            <label for="avatar">Avatar URL:</label>
-                            <input type="text" id="avatar" name="avatar" value="${data.avatar}" required>
-                            <br>
-                            <label for="bio">Bio:</label>
-                            <textarea id="bio" name="bio">${data.bio}</textarea>
-                            <br>
-                            <label for="codePostal">Code postal: </label>
-                            <input type="text" id="codePostal" name="codePostal" value="">
-                            <button type="submit">Modifier le profil</button>
-                        </form>
-                    `;
-                    document.getElementById('backButton').style.display = 'inline-block';
+<script>
+    async function fetchUserProfile() {
+        const id = localStorage.getItem('id');
 
-                    // Ajouter l'écouteur d'événements pour le formulaire
-                    const form = document.getElementById('editForm');
-                    form.addEventListener('submit', async function(event) {
-                        event.preventDefault();
-
-                        const formData = new FormData(form);
-
-                        try {
-                            const response = await fetch('/app/user/' + id, {
-                                method: 'PATCH',
-                                headers: {
-                                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(Object.fromEntries(formData.entries()))
-                            });
-
-                            if (response.ok) {
-                                alert('Profil modifié avec succès!');
-                                window.location.href = '/app/src/profil.html';
-                            } else {
-                                alert('Erreur lors de la modification du profil.');
-                            }
-                        } catch (error) {
-                            console.error('Erreur de réseau:', error);
-                        }
-                    });
-                } else {
-                    document.getElementById('content').innerHTML = '<p>Erreur lors de la récupération des données utilisateur.</p>';
-                    console.error('Erreur lors de la récupération des données utilisateur');
+        try {
+            const response = await fetch('/app/user/' + id, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json',
+                    'user-id': id
                 }
-            } catch (error) {
-                document.getElementById('content').innerHTML = '<p>Erreur de réseau.</p>';
-                console.error('Erreur de réseau:', error);
+            });
+            if (response.ok) {
+                const data = await response.json();
+                afficherNom(data.username);
+                afficherBio(data.bio);
             }
+        } catch (error) {
+            document.body.innerHTML = '<p>Erreur de réseau.</p>';
+            console.error('Erreur de réseau:', error);
         }
+    }
 
-        fetchUserProfile();
-    </script>
+    function afficherNom(nom) {
+      const nomSpan = document.getElementById('nom');
+      nomSpan.textContent = nom;
+
+      nomSpan.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = nomSpan.textContent;
+        input.id = 'editNom';
+        nomSpan.replaceWith(input);
+        input.focus();
+
+        const valider = () => {
+          const nouveauNom = input.value.trim();
+          nomSpan.textContent = nouveauNom || 'Sans nom';
+          input.replaceWith(nomSpan);
+          saveDB('username', nouveauNom);
+        };
+
+        input.addEventListener('blur', valider);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') valider();
+        });
+      });
+    }
+
+    function afficherBio(bio) {
+        const bioSpan = document.getElementById('bio');
+        bioSpan.textContent = bio;
+
+        bioSpan.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = bioSpan.textContent;
+            input.id = 'editBio';
+
+            bioSpan.replaceWith(input);
+            input.focus();
+
+            const valider = () => {
+            const nouvelleBio = input.value.trim();
+            bioSpan.textContent = nouvelleBio || 'Sans bio';
+            input.replaceWith(bioSpan);
+            saveDB('bio', nouvelleBio);
+            };
+
+            input.addEventListener('blur', valider);
+            input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') valider();
+            });
+        });
+    }
+
+    async function saveDB(champ, valeur) {
+    const id = localStorage.getItem('id');
+
+    try {
+        const response = await fetch('/app/user/' + id, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+            'user-id': id
+        },
+        body: JSON.stringify({
+            [champ]: valeur
+        })
+        });
+
+        if (!response.ok) {
+        console.error('Erreur lors de la sauvegarde :', await response.text());
+        } else {
+        console.log('Donnée mise à jour avec succès !');
+        }
+    } catch (error) {
+        console.error('Erreur réseau :', error);
+    }
+    }
+
+    document.getElementById('avatarInput').addEventListener('change', async function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Affiche un aperçu local immédiat
+    const preview = document.getElementById('avatarPreview');
+    preview.src = URL.createObjectURL(file);
+
+    // Envoie au serveur
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const id = localStorage.getItem('id');
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch('/app/user/' + id + '/upload-avatar', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'user-id': id
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json(); // le serveur doit retourner le lien
+        console.log('Lien image:', data.avatarUrl);
+        saveDB('avatar', data.avatarUrl); // enregistre dans la base
+      } else {
+        console.error('Échec de l\'upload');
+      }
+    } catch (error) {
+      console.error('Erreur réseau :', error);
+    }
+  });
+
+
+window.addEventListener('DOMContentLoaded', fetchUserProfile);    
+</script>
 </body>
 </html>

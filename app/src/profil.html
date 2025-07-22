@@ -91,22 +91,16 @@ async function fetchUserProfile() {
             localStorage.setItem('gender', data.gender);
             localStorage.setItem('search_gender', data.search_gender);
             document.body.innerHTML = `
-                <h1>Profil de ${data.username}</h1>
-                <img src="${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100">
-                <p>dob: ${data.dob}</p>
+                <h1>${data.username}</h1>
+                <a href="/app/src/edit.html"><img src="/app/public/${data.avatar}" alt="Avatar de ${data.username}" width="100" height="100"></a>
                 <p>bio: ${data.bio}</p>
-                <div class="svg-container">
+                <a href="/app/src/draw.html"><div class="svg-container">
                     <svg width="300" height="300" style="border : 1px solid #ccc; "viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         ${data.draw_svg}
                     </svg>
-                </div>
-                <p>draw_description: ${data.draw_description}</p>
-                <button title="recherche de match" onclick="window.location.href='/app/src/searchMatch.html'" ><img src="/app/src/Assets/home.png"  alt="home" height="26px" width="26px"></button>
-                <button title="chat" onclick="window.location.href='/app/src/chat.html'"><img src="/app/src/Assets/chat.png" alt="chat" height="26px" width="26px"></button>
-                <button title="dessin et description" onclick="window.location.href='/app/src/draw.html'"><img src="/app/src/Assets/drawing.png" alt="draw" height="26px" width="26px"></button>
-                <button title="modifier son profil" onclick="window.location.href='/app/src/edit.html'"><img src="/app/src/Assets/edit-profil.png" alt="edit-profil" height="26px" width="26px"></button>
-                <button title="modifier son mot de passe" onclick="window.location.href='/app/src/editPassword.html'"><img src="/app/src/Assets/edit-password.png" alt="edit-password" height="26px" width="26px"></button>
-                <button title="supprimer son profil" onclick="window.location.href='/app/src/delete.html'"><img src="/app/src/Assets/delete.png" alt="delete" height="26px" width="26px"></button>
+                    <p>${data.draw_description}</p>
+                </div></a>
+                
                 <button title="deconnexion" onclick="logout()"><img src="/app/src/Assets/logout.png" alt="logout" height="26px" width="26px"></button>
 
 
